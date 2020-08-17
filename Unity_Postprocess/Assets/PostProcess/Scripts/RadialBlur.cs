@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class RadialBlurController : MonoBehaviour
+	public class RadialBlur : PostProcessBase
 	{
 		static readonly int SAMPLES_ID = Shader.PropertyToID("_Samples");
 		static readonly int AMOUNT_ID = Shader.PropertyToID("_EffectAmount");
@@ -15,25 +15,20 @@ namespace PostProcess
 		static readonly int CENTERY_ID = Shader.PropertyToID("_CenterY");
 		static readonly int RADIUS_ID = Shader.PropertyToID("_Radius");
 
-		private Material material;
 
-		[SerializeField]
-		[Range(4f, 32f)]
+		[SerializeField][Range(4f, 32f)]
 		private float samples = 10f;
 
 		[SerializeField]
 		private float amount = 1f;
 
-		[SerializeField]
-		[Range(0f, 1f)]
+		[SerializeField][Range(0f, 1f)]
 		private float centerX = 0.5f;
 
-		[SerializeField]
-		[Range(0f, 1f)]
+		[SerializeField][Range(0f, 1f)]
 		private float centerY = 0.5f;
 
-		[SerializeField]
-		[Range(0f, 50f)]
+		[SerializeField][Range(0f, 50f)]
 		private float radius = 0.1f;
 
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)

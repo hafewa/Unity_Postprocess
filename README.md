@@ -1,7 +1,6 @@
-# Unity_Postprocess
+# Unity_PostProcess
 
 
-### PostProcess
 - Bloom
 - Blur
 - Fog (Height, Distance)
@@ -9,3 +8,5 @@
 - Glare
 - GodRay
 - RadialBlur
+- Fast Approximate Anti-aliasing (FXAA) 
+

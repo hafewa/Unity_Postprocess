@@ -5,14 +5,12 @@ using UnityEngine;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class GlareController : MonoBehaviour
+	public class Glare : PostProcessBase
 	{
 		private static readonly int THRESHOLD_ID = Shader.PropertyToID("_Threshold");
 		private static readonly int ATTENUATION_ID = Shader.PropertyToID("_Attenuation");
 		private static readonly int INTENSITY_ID = Shader.PropertyToID("_Intensity");
 		private static readonly int ITERATION_ID = Shader.PropertyToID("_Iteration");
-
-		private Material material;
 
 		[SerializeField, Range(0.0f, 10.0f)]
 		private float threshold = 0.5f;

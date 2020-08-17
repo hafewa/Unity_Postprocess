@@ -7,31 +7,19 @@ using UnityEngine.Rendering;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class BlurController : MonoBehaviour
+	public class Blur : PostProcessBase
 	{
 		static readonly int PIXEL_ID = Shader.PropertyToID("_PixelSize");
 
-		private Material material;
-
-		[SerializeField]
-		[Range(0, 20)]
+		[SerializeField][Range(0, 20)]
 		private float resolution = 0;
 
-		//[SerializeField][Range(2, 50)]
 		private float dispersion = 4f;
 
-		//[SerializeField][Range(2, 100)]
 		private int iteration = 8;
 
-		public float Resolution
-		{
-			get { return this.resolution; }
-		}
+		public float Resolution { get => resolution; set => resolution = value; }
 
-		public void SetResolution(float newResolution)
-		{
-			this.resolution = newResolution;
-		}
 
 		private float[] CalcWeight(float dispersion, int count)
 		{
@@ -51,10 +39,10 @@ namespace PostProcess
 
 		private void OnRenderImage(RenderTexture source, RenderTexture dest)
 		{
-			if (this.material == null)
+			if (material == null)
 			{
-				this.material = new Material(Shader.Find("Hidden/PostProcess/Blur"));
-				this.material.hideFlags = HideFlags.HideAndDontSave;
+				material = new Material(Shader.Find("Hidden/PostProcess/Blur"));
+				material.hideFlags = HideFlags.HideAndDontSave;
 			}
 
 			if (resolution <= 0)

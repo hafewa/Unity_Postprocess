@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class BloomController : MonoBehaviour
+	public class Bloom : PostProcessBase
 	{
 		static readonly int FILTER_PROP_ID = Shader.PropertyToID("_Filter");
 		static readonly int COLOR_PROP_ID = Shader.PropertyToID("_Color");
@@ -26,16 +26,13 @@ namespace PostProcess
 
 		public Color Color { get => color; set => color = value; }
 
-		[SerializeField]
-		[Range(0, 10)]
+		[SerializeField][Range(0, 10)]
 		private float intensity = 1;
 
-		[SerializeField]
-		[Range(0, 10)]
+		[SerializeField][Range(0, 10)]
 		private float threshold = 1;
 
-		[SerializeField]
-		[Range(0, 1)]
+		[SerializeField][Range(0, 1)]
 		private float softThreshold = 0.5f;
 
 		[SerializeField, ColorUsage(false, true)]
@@ -48,7 +45,6 @@ namespace PostProcess
 		private int iterations = 4;
 
 		RenderTexture[] textures = new RenderTexture[8];
-		Material material;
 
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{

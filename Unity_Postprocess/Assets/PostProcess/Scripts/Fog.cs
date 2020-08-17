@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class FogController : MonoBehaviour
+	public class Fog : PostProcessBase
 	{
 		public enum FogType
 		{
@@ -27,37 +27,27 @@ namespace PostProcess
 		static readonly int DISTANCE_PARAM_ID = Shader.PropertyToID("_DistanceParams");
 
 		private new Camera camera;
-		private Material material;
 
-		[Header("Fogの高さ")]
 		[SerializeField]
 		private float height = 5f;
 
-		[Header("Fogの密度")]
-		[SerializeField]
-		[Range(0.001f, 10f)]
+		[SerializeField][Range(0.001f, 10f)]
 		private float density = 1f;
 
 		[SerializeField]
 		private Color color = Color.white;
 
-		[Header("開始距離")]
-		[SerializeField]
-		[Range(0, 10000f)]
+		[SerializeField][Range(0, 10000f)]
 		private float startDistance = default;
 
-		[Header("終了距離")]
-		[SerializeField]
-		[Range(0, 10000f)]
+		[SerializeField][Range(0, 10000f)]
 		private float endDistance = 5000f;
 
-		[Header("Fogの種類")]
 		[SerializeField]
 		private FogType fogType = FogType.Distance;
 
 		private bool useRadialDistance = false;
 
-		[Header("NoiseTexture Setting")]
 		[SerializeField]
 		private float scale = 100f;
 
@@ -66,6 +56,7 @@ namespace PostProcess
 
 		[SerializeField]
 		private Texture2D noiseTexture = default;
+
 
 		private readonly Vector3[] frustumCorners = new Vector3[4];
 
@@ -81,36 +72,35 @@ namespace PostProcess
 
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
-			if (this.material == null)
+			if (material == null)
 			{
-				this.material = new Material(Shader.Find("Hidden/PostProcess/Fog"));
-				this.material.hideFlags = HideFlags.HideAndDontSave;
+				material = new Material(Shader.Find("Hidden/PostProcess/Fog"));
+				material.hideFlags = HideFlags.HideAndDontSave;
 			}
 
-			if (this.material == null || this.camera == null)
+			if (material == null || camera == null)
 			{
 				Graphics.Blit(source, destination);
 				return;
 			}
 
-			this.material.SetMatrix(MATRIX_ID, GetFrustumCorners());
+			material.SetMatrix(MATRIX_ID, GetFrustumCorners());
 
 			Transform cameraTransform = camera.transform;
 			float FdotC = cameraTransform.position.y - height;
 			float paramK = FdotC <= 0.0f ? 1.0f : 0.0f;
 			float densityInternal = density * 0.005f;
 
-			this.material.SetVector(CAMERA_POS_ID, cameraTransform.position);
-			this.material.SetVector(HEIGHT_PARAM_ID, new Vector4(height, FdotC, paramK, densityInternal));
-			this.material.SetVector(DISTANCE_PARAM_ID, new Vector4(startDistance, endDistance, 0, 0));
-
-			this.material.SetColor(COLOR_ID, color);
-			this.material.SetFloat(SCALE_ID, scale);
+			material.SetVector(CAMERA_POS_ID, cameraTransform.position);
+			material.SetVector(HEIGHT_PARAM_ID, new Vector4(height, FdotC, paramK, densityInternal));
+			material.SetVector(DISTANCE_PARAM_ID, new Vector4(startDistance, endDistance, 0, 0));
+			material.SetColor(COLOR_ID, color);
+			material.SetFloat(SCALE_ID, scale);
 
 			var movementSpeed = speed / 100f;
 			movementSpeed *= Time.realtimeSinceStartup;
-			this.material.SetVector(SPEED_ID, movementSpeed);
-			this.material.SetTexture(NOISE_TEXTURE_ID, noiseTexture);
+			material.SetVector(SPEED_ID, movementSpeed);
+			material.SetTexture(NOISE_TEXTURE_ID, noiseTexture);
 
 			SetFogKeyword();
 			CustomGraphicsBlit(source, destination, material, 0);
@@ -167,12 +157,12 @@ namespace PostProcess
 			switch (fogType)
 			{
 				case FogType.Distance:
-					this.material.DisableKeyword("HEIGHT_FOG");
-					this.material.EnableKeyword("DISTANCE_FOG");
+					material.DisableKeyword("HEIGHT_FOG");
+					material.EnableKeyword("DISTANCE_FOG");
 					break;
 				case FogType.Height:
-					this.material.DisableKeyword("DISTANCE_FOG");
-					this.material.EnableKeyword("HEIGHT_FOG");
+					material.DisableKeyword("DISTANCE_FOG");
+					material.EnableKeyword("HEIGHT_FOG");
 					break;
 			}
 		}

@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class GaussianController : MonoBehaviour
+	public class GaussianBlur : PostProcessBase
 	{
 		private static readonly int intencity1ID = Shader.PropertyToID("_Intencity1");
 		private static readonly int intencity2ID = Shader.PropertyToID("_Intencity2");
@@ -23,34 +23,24 @@ namespace PostProcess
 		private static readonly int bloomSource2RT_ID = Shader.PropertyToID("_BloomSourceRT2");
 		private static readonly int COLOR_PROP_ID = Shader.PropertyToID("_Color");
 
-		[SerializeField]
-		[Range(0, 40)]
+		[SerializeField][Range(0, 40)]
 		private float intencity1 = 1;
 
-		[SerializeField]
-		[Range(0, 10)]
+		[SerializeField][Range(0, 10)]
 		private float threshold1 = 1;
 
-		[SerializeField]
-		[Range(2, 20)]
+		[SerializeField][Range(2, 20)]
 		private float radius1 = 8;
 
-		[SerializeField]
-		[Range(0, 40)]
+		[SerializeField][Range(0, 40)]
 		private float intencity2 = 1;
 
-		[SerializeField]
-		[Range(0, 10)]
+		[SerializeField][Range(0, 10)]
 		private float threshold2 = 1;
 
-		[SerializeField]
-		[Range(2, 80)]
+		[SerializeField][Range(2, 80)]
 		private float radius2 = 8;
 
-		//[SerializeField, ColorUsage(false, true)]
-		//private Color color = Color.black;
-
-		private Material material;
 
 		private void RenderBlur(CommandBuffer commandBuffer, RenderTargetIdentifier src, int outputBufferID, float threshold, float radius, bool isCrossBloom)
 		{
