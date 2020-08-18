@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class Glare : PostProcessBase
+	public sealed class Glare : PostProcessBase
 	{
 		private static readonly int THRESHOLD_ID = Shader.PropertyToID("_Threshold");
 		private static readonly int ATTENUATION_ID = Shader.PropertyToID("_Attenuation");
@@ -21,7 +21,7 @@ namespace PostProcess
 		[SerializeField, Range(0.0f, 10.0f)]
 		private float intensity = 1.0f;
 
-		[SerializeField, Range(2, 8)]
+		[SerializeField, Range(1, 6)]
 		private int iteration = 4;
 
 		[SerializeField, Range(0f, 2f)]

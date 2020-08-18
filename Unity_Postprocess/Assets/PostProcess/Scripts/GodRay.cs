@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class GodRay : PostProcessBase
+	public sealed class GodRay : PostProcessBase
 	{
 		private static readonly int THRESHOLD_ID = Shader.PropertyToID("_ColorThreshold");
 		private static readonly int LIGHTPOS_ID = Shader.PropertyToID("_ViewPortLightPos");

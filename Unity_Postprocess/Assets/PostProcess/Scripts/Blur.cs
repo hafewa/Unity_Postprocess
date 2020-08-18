@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class Blur : PostProcessBase
+	public sealed class Blur : PostProcessBase
 	{
 		static readonly int PIXEL_ID = Shader.PropertyToID("_PixelSize");
 

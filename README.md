@@ -3,10 +3,12 @@
 
 - Bloom
 - Blur
+- CameraMotionBlur
 - Fog (Height, Distance)
+- Fast Approximate Anti-aliasing (FXAA) 
 - GaussianBlur
 - Glare
 - GodRay
+- MotionBlur
 - RadialBlur
-- Fast Approximate Anti-aliasing (FXAA) 
 

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class FXAA : PostProcessBase
+	public sealed class FXAA : PostProcessBase
 	{
 
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)

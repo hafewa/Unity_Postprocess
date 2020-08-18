@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class Fog : PostProcessBase
+	public sealed class Fog : PostProcessBase
 	{
 		public enum FogType
 		{

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class Bloom : PostProcessBase
+	public sealed class Bloom : PostProcessBase
 	{
 		static readonly int FILTER_PROP_ID = Shader.PropertyToID("_Filter");
 		static readonly int COLOR_PROP_ID = Shader.PropertyToID("_Color");

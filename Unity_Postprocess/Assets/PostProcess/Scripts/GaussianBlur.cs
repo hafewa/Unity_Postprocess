@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class GaussianBlur : PostProcessBase
+	public sealed class GaussianBlur : PostProcessBase
 	{
 		private static readonly int intencity1ID = Shader.PropertyToID("_Intencity1");
 		private static readonly int intencity2ID = Shader.PropertyToID("_Intencity2");

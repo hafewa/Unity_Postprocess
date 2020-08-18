@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class RadialBlur : PostProcessBase
+	public sealed class RadialBlur : PostProcessBase
 	{
 		static readonly int SAMPLES_ID = Shader.PropertyToID("_Samples");
 		static readonly int AMOUNT_ID = Shader.PropertyToID("_EffectAmount");

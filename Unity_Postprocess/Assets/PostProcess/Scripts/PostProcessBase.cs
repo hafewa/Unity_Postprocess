@@ -8,11 +8,12 @@ namespace PostProcess
 	{
 		protected Material material;
 
-		protected virtual void OnDestroy()
+		protected virtual void OnDisable()
 		{
 			if (material)
 			{
 				DestroyImmediate(material);
+				material = null;
 			}
 		}
 

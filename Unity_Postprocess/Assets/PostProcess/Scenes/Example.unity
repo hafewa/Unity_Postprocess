@@ -230,6 +230,7 @@ GameObject:
   - component: {fileID: 80564870}
   - component: {fileID: 80564872}
   - component: {fileID: 80564871}
+  - component: {fileID: 80564873}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -429,6 +430,18 @@ MonoBehaviour:
   lightTransform: {fileID: 0}
   lightRadius: 1.74
   lightPowFactor: 2.15
+--- !u!114 &80564873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 80564862}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4a4e97406fb2214cb4f04a1a70d79e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &791596440
 GameObject:
   m_ObjectHideFlags: 0
