@@ -100,12 +100,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	}
 
 	// pass 1
-	half4 Debug(v2f i) : SV_Target
-	{
-		return saturate(float4(tex2D(_MainTex, i.uv).x,abs(tex2D(_MainTex, i.uv).y),-tex2D(_MainTex, i.uv).xy) * _DisplayVelocityScale);
-	}
-
-	// pass 2
 	half4 TileMax(v2f i) : SV_Target
 	{
 		float2 uvCorner = i.uv - _MainTex_TexelSize.xy * (_MaxRadiusOrKInPaper * 0.5);
@@ -123,7 +117,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return float4(maxvel, 0, 1);
 	}
 
-	// pass 3
+	// pass 2
 	half4 NeighbourMax(v2f i) : SV_Target
 	{
 		float2 x_ = i.uv;
@@ -140,7 +134,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return float4(nx, 0, 0);
 	}
 
-	// pass 4
+	// pass 3
 	half4 ReconstructFilterBlur(v2f i) : SV_Target
 	{
 		float2 x = i.uv;
@@ -219,7 +213,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return sum;
 	}
 
-	// pass 5
+	// pass 4
 	half4 SimpleBlur(v2f i) : SV_Target
 	{
 		float2 x = i.uv;
@@ -248,7 +242,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return sum;
 	}
 
-	// pass 6
+	// pass 5
 	half4 MotionVectorBlur(v2f i) : SV_Target
 	{
 		float2 x = i.uv;
@@ -283,7 +277,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return sum / (1 + MOTION_SAMPLES);
 	}
 
-	// pass 7
+	// pass 6
 	half4 ReconstructionDiscBlur(v2f i) : SV_Target
 	{
 		float2 xf = i.uv;
@@ -379,7 +373,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			CGPROGRAM
 			#pragma target 3.0
 			#pragma vertex vert
-			#pragma fragment Debug
+			#pragma fragment TileMax
 			ENDCG
 		}
 
@@ -389,21 +383,11 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			CGPROGRAM
 			#pragma target 3.0
 			#pragma vertex vert
-			#pragma fragment TileMax
-			ENDCG
-		}
-
-		// pass 3
-		Pass
-		{
-			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
 			#pragma fragment NeighbourMax
 			ENDCG
 		}
 
-		// pass 4
+		// pass 3
 		Pass
 		{
 			CGPROGRAM
@@ -413,7 +397,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			ENDCG
 		}
 
-		// pass 5
+		// pass 4
 		Pass
 		{
 			CGPROGRAM
@@ -423,7 +407,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			ENDCG
 		}
 
-		// pass 6
+		// pass 5
 		Pass
 		{
 			CGPROGRAM
@@ -433,7 +417,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			ENDCG
 		}
 
-		// pass 7
+		// pass 6
 		Pass
 		{
 			CGPROGRAM

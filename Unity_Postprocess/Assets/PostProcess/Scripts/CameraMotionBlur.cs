@@ -58,19 +58,17 @@ namespace PostProcess
 
 		// resources
 		private GameObject tmpCam = default;
-		private Shader shader = default;
-		private Shader dx11MotionBlurShader = default;
 		private Shader replacementClear = default;
-		private Material motionBlurMaterial = default;
-		private Material dx11MotionBlurMaterial = default;
+		private Material dx11Material = default;
 
 		private Matrix4x4 currentViewProjMat = default;
 		private Matrix4x4 prevViewProjMat = default;
-		private int prevFrameCount = default;
-		private bool wasActive = false;
 		private Vector3 prevFrameForward = Vector3.forward;
 		private Vector3 prevFrameUp = Vector3.up;
 		private Vector3 prevFramePos = Vector3.zero;
+		private int prevFrameCount = default;
+		private bool wasActive = false;
+
 		private new Camera camera = default;
 
 		private void Start()
@@ -91,27 +89,25 @@ namespace PostProcess
 			replacementClear = Shader.Find("Hidden/PostProcess/MotionBlurClear");
 
 			// Mobile—p MotionBlur
-			shader = Shader.Find("Hidden/PostProcess/CameraMotionBlur");
-			motionBlurMaterial = new Material(shader);
+			material = new Material(Shader.Find("Hidden/PostProcess/CameraMotionBlur"));
 
 			// Console—p MotionBlur
-			dx11MotionBlurShader = Shader.Find("Hidden/PostProcess/CameraMotionBlurDX11");
-			dx11MotionBlurMaterial = new Material(dx11MotionBlurShader);
+			dx11Material = new Material(Shader.Find("Hidden/PostProcess/CameraMotionBlurDX11"));
 		}
 
 		protected override void OnDisable()
 		{
 			base.OnDisable();
 
-			if (motionBlurMaterial != null)
+			if (material != null)
 			{
-				DestroyImmediate(motionBlurMaterial);
-				motionBlurMaterial = null;
+				DestroyImmediate(material);
+				material = null;
 			}
-			if (dx11MotionBlurMaterial != null)
+			if (dx11Material != null)
 			{
-				DestroyImmediate(dx11MotionBlurMaterial);
-				dx11MotionBlurMaterial = null;
+				DestroyImmediate(dx11Material);
+				dx11Material = null;
 			}
 			if (tmpCam != null)
 			{
@@ -129,12 +125,10 @@ namespace PostProcess
 
 		private bool CheckResources()
 		{
-			if (shader == null || 
-				camera == null ||
-				replacementClear == null || 
-				motionBlurMaterial == null || 
-				dx11MotionBlurShader == null || 
-				dx11MotionBlurMaterial == null)
+			if (camera == null ||
+				material == null ||
+				replacementClear == null ||
+				dx11Material == null)
 			{
 				return false;
 			}
@@ -204,6 +198,43 @@ namespace PostProcess
 			return (x + d - 1) / d;
 		}
 
+		private void NoiseTextureFilterMode()
+		{
+			if (noiseTexture)
+			{
+				noiseTexture.filterMode = FilterMode.Point;
+			}
+		}
+
+		private void BlurVector(int sourceWidth)
+		{
+			Vector4 blurVector = Vector4.zero;
+			float lookUpDown = Vector3.Dot(transform.up, Vector3.up);
+			Vector3 distanceVector = prevFramePos - transform.position;
+			float distMag = distanceVector.magnitude;
+			float farHeur = 1.0f;
+
+			// pitch (vertical)
+			farHeur = (Vector3.Angle(transform.up, prevFrameUp) / camera.fieldOfView) * (sourceWidth * 0.75f);
+			blurVector.x = rotationScale * farHeur;
+
+			// yaw #1 (horizontal, faded by pitch)
+			farHeur = (Vector3.Angle(transform.forward, prevFrameForward) / camera.fieldOfView) * (sourceWidth * 0.75f);
+			blurVector.y = rotationScale * lookUpDown * farHeur;
+
+			// yaw #2 (when looking down, faded by 1-pitch)
+			farHeur = (Vector3.Angle(transform.forward, prevFrameForward) / camera.fieldOfView) * (sourceWidth * 0.75f);
+			blurVector.z = rotationScale * (1.0f - lookUpDown) * farHeur;
+
+			if (distMag > Mathf.Epsilon && movementScale > Mathf.Epsilon)
+			{
+				blurVector.w = movementScale * (Vector3.Dot(transform.forward, distanceVector)) * (sourceWidth * 0.5f);
+				blurVector.x += movementScale * (Vector3.Dot(transform.up, distanceVector)) * (sourceWidth * 0.5f);
+				blurVector.y += movementScale * (Vector3.Dot(transform.right, distanceVector)) * (sourceWidth * 0.5f);
+			}
+			material.SetVector("_BlurDirectionPacked", blurVector);
+		}
+
 		/// <summary>
 		/// Update RenderImage
 		/// </summary>
@@ -225,27 +256,30 @@ namespace PostProcess
 			var rtFormat = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RGHalf) ? RenderTextureFormat.RGHalf : RenderTextureFormat.ARGBHalf;
 
 			// get temp textures
-			RenderTexture velBuffer = RenderTexture.GetTemporary(RoundUp(source.width, velocityDownsample), RoundUp(source.height, velocityDownsample), 0, rtFormat);
+			RenderTexture velocityBuffer = RenderTexture.GetTemporary(
+				RoundUp(source.width, velocityDownsample), 
+				RoundUp(source.height, velocityDownsample), 
+				0, rtFormat);
+
 			int tileWidth = 1;
 			int tileHeight = 1;
 			maxVelocity = Mathf.Max(2.0f, maxVelocity);
-			float _maxVelocity = maxVelocity;
 
-			tileWidth = RoundUp(velBuffer.width, (int)maxVelocity);
-			tileHeight = RoundUp(velBuffer.height, (int)maxVelocity);
-			_maxVelocity = velBuffer.width / tileWidth;
+			float _maxVelocity = maxVelocity;
+			tileWidth = RoundUp(velocityBuffer.width, (int)maxVelocity);
+			tileHeight = RoundUp(velocityBuffer.height, (int)maxVelocity);
+			_maxVelocity = velocityBuffer.width / tileWidth;
 
 			RenderTexture tileMax = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, rtFormat);
 			RenderTexture neighbourMax = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, rtFormat);
-			velBuffer.filterMode = FilterMode.Point;
+			velocityBuffer.filterMode = FilterMode.Point;
 			tileMax.filterMode = FilterMode.Point;
 			neighbourMax.filterMode = FilterMode.Point;
-			if (noiseTexture)
-			{
-				noiseTexture.filterMode = FilterMode.Point;
-			}
+
+			NoiseTextureFilterMode();
+
 			source.wrapMode = TextureWrapMode.Clamp;
-			velBuffer.wrapMode = TextureWrapMode.Clamp;
+			velocityBuffer.wrapMode = TextureWrapMode.Clamp;
 			neighbourMax.wrapMode = TextureWrapMode.Clamp;
 			tileMax.wrapMode = TextureWrapMode.Clamp;
 
@@ -260,55 +294,31 @@ namespace PostProcess
 
 			// matrices
 			Matrix4x4 invViewPrj = Matrix4x4.Inverse(currentViewProjMat);
-			motionBlurMaterial.SetMatrix("_InvViewProj", invViewPrj);
-			motionBlurMaterial.SetMatrix("_PrevViewProj", prevViewProjMat);
-			motionBlurMaterial.SetMatrix("_ToPrevViewProjCombined", prevViewProjMat * invViewPrj);
+			material.SetMatrix("_InvViewProj", invViewPrj);
+			material.SetMatrix("_PrevViewProj", prevViewProjMat);
+			material.SetMatrix("_ToPrevViewProjCombined", prevViewProjMat * invViewPrj);
 
-			motionBlurMaterial.SetFloat("_MaxVelocity", _maxVelocity);
-			motionBlurMaterial.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
-			motionBlurMaterial.SetFloat("_MinVelocity", minVelocity);
-			motionBlurMaterial.SetFloat("_VelocityScale", velocityScale);
-			motionBlurMaterial.SetFloat("_Jitter", jitter);
+			material.SetFloat("_MaxVelocity", _maxVelocity);
+			material.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
+			material.SetFloat("_MinVelocity", minVelocity);
+			material.SetFloat("_VelocityScale", velocityScale);
+			material.SetFloat("_Jitter", jitter);
 
 			// texture samplers
-			motionBlurMaterial.SetTexture("_NoiseTex", noiseTexture);
-			motionBlurMaterial.SetTexture("_VelTex", velBuffer);
-			motionBlurMaterial.SetTexture("_NeighbourMaxTex", neighbourMax);
-			motionBlurMaterial.SetTexture("_TileTexDebug", tileMax);
+			material.SetTexture("_NoiseTex", noiseTexture);
+			material.SetTexture("_VelTex", velocityBuffer);
+			material.SetTexture("_NeighbourMaxTex", neighbourMax);
+			material.SetTexture("_TileTexDebug", tileMax);
 
 
 			if (filterType == MotionBlurFilter.CameraMotion)
 			{
-				Vector4 blurVector = Vector4.zero;
-				float lookUpDown = Vector3.Dot(transform.up, Vector3.up);
-				Vector3 distanceVector = prevFramePos - transform.position;
-				float distMag = distanceVector.magnitude;
-				float farHeur = 1.0f;
-
-				// pitch (vertical)
-				farHeur = (Vector3.Angle(transform.up, prevFrameUp) / camera.fieldOfView) * (source.width * 0.75f);
-				blurVector.x = rotationScale * farHeur;
-
-				// yaw #1 (horizontal, faded by pitch)
-				farHeur = (Vector3.Angle(transform.forward, prevFrameForward) / camera.fieldOfView) * (source.width * 0.75f);
-				blurVector.y = rotationScale * lookUpDown * farHeur;
-
-				// yaw #2 (when looking down, faded by 1-pitch)
-				farHeur = (Vector3.Angle(transform.forward, prevFrameForward) / camera.fieldOfView) * (source.width * 0.75f);
-				blurVector.z = rotationScale * (1.0f - lookUpDown) * farHeur;
-
-				if (distMag > Mathf.Epsilon && movementScale > Mathf.Epsilon)
-				{
-					blurVector.w = movementScale * (Vector3.Dot(transform.forward, distanceVector)) * (source.width * 0.5f);
-					blurVector.x += movementScale * (Vector3.Dot(transform.up, distanceVector)) * (source.width * 0.5f);
-					blurVector.y += movementScale * (Vector3.Dot(transform.right, distanceVector)) * (source.width * 0.5f);
-				}
-				motionBlurMaterial.SetVector("_BlurDirectionPacked", blurVector);
+				BlurVector(source.width);
 			}
 			else
 			{
-				Graphics.Blit(source, velBuffer, motionBlurMaterial, 0);
-				ReplacementShader(velBuffer);
+				Graphics.Blit(source, velocityBuffer, material, 0);
+				ReplacementShader(velocityBuffer);
 			}
 
 			if (Time.frameCount != prevFrameCount)
@@ -323,52 +333,60 @@ namespace PostProcess
 			{
 				case MotionBlurFilter.CameraMotion:
 				{
-					Graphics.Blit(source, destination, motionBlurMaterial, 6);
+					// MotionVectorBlur
+					Graphics.Blit(source, destination, material, 5);
 				}
 				break;
 
 				case MotionBlurFilter.LocalBlur:
 				{
-					Graphics.Blit(source, destination, motionBlurMaterial, 5);
+					// SimpleBlur
+					Graphics.Blit(source, destination, material, 4);
 				}
 				break;
 
 				case MotionBlurFilter.Reconstruction:
 				{
-					motionBlurMaterial.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
-					Graphics.Blit(velBuffer, tileMax, motionBlurMaterial, 2);
-					Graphics.Blit(tileMax, neighbourMax, motionBlurMaterial, 3);
-					Graphics.Blit(source, destination, motionBlurMaterial, 4);
+					material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
+					// TileMax
+					Graphics.Blit(velocityBuffer, tileMax, material, 1);
+					// NeighbourMax
+					Graphics.Blit(tileMax, neighbourMax, material, 2);
+					// ReconstructFilterBlur
+					Graphics.Blit(source, destination, material, 3);
 				}
 				break;
 
 				case MotionBlurFilter.ReconstructionDX11:
 				{
-					dx11MotionBlurMaterial.SetFloat("_MinVelocity", minVelocity);
-					dx11MotionBlurMaterial.SetFloat("_VelocityScale", velocityScale);
-					dx11MotionBlurMaterial.SetFloat("_Jitter", jitter);
-					dx11MotionBlurMaterial.SetTexture("_NoiseTex", noiseTexture);
-					dx11MotionBlurMaterial.SetTexture("_VelTex", velBuffer);
-					dx11MotionBlurMaterial.SetTexture("_NeighbourMaxTex", neighbourMax);
-					dx11MotionBlurMaterial.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
-					dx11MotionBlurMaterial.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
-					Graphics.Blit(velBuffer, tileMax, dx11MotionBlurMaterial, 0);
-					Graphics.Blit(tileMax, neighbourMax, dx11MotionBlurMaterial, 1);
-					Graphics.Blit(source, destination, dx11MotionBlurMaterial, 2);
+					dx11Material.SetFloat("_MinVelocity", minVelocity);
+					dx11Material.SetFloat("_VelocityScale", velocityScale);
+					dx11Material.SetFloat("_Jitter", jitter);
+					dx11Material.SetTexture("_NoiseTex", noiseTexture);
+					dx11Material.SetTexture("_VelTex", velocityBuffer);
+					dx11Material.SetTexture("_NeighbourMaxTex", neighbourMax);
+					dx11Material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
+					dx11Material.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
+					Graphics.Blit(velocityBuffer, tileMax, dx11Material, 0);
+					Graphics.Blit(tileMax, neighbourMax, dx11Material, 1);
+					Graphics.Blit(source, destination, dx11Material, 2);
 				}
 				break;
 
 				case MotionBlurFilter.ReconstructionDisc:
 				{
-					motionBlurMaterial.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
-					Graphics.Blit(velBuffer, tileMax, motionBlurMaterial, 2);
-					Graphics.Blit(tileMax, neighbourMax, motionBlurMaterial, 3);
-					Graphics.Blit(source, destination, motionBlurMaterial, 7);
+					material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
+					// TileMax
+					Graphics.Blit(velocityBuffer, tileMax, material, 1);
+					// NeighbourMax
+					Graphics.Blit(tileMax, neighbourMax, material, 2);
+					// ReconstructionDiscBlur
+					Graphics.Blit(source, destination, material, 6);
 				}
 				break;
 			}
 
-			RenderTexture.ReleaseTemporary(velBuffer);
+			RenderTexture.ReleaseTemporary(velocityBuffer);
 			RenderTexture.ReleaseTemporary(tileMax);
 			RenderTexture.ReleaseTemporary(neighbourMax);
 		}

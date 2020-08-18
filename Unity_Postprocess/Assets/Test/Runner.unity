@@ -488,7 +488,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1603570667}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 543ddbe12367a4899b011d43ef41f357, type: 3}
   m_Name: 
@@ -498,9 +498,9 @@ MonoBehaviour:
   _positionFrequency: 0.2
   _rotationFrequency: 0.2
   _positionAmplitude: 0.5
-  _rotationAmplitude: 60
+  _rotationAmplitude: 10
   _positionScale: {x: 1, y: 1, z: 1}
-  _rotationScale: {x: 0.06, y: 1, z: 0.5}
+  _rotationScale: {x: 1, y: 1, z: 1}
   _positionFractalLevel: 3
   _rotationFractalLevel: 1
 --- !u!20 &1603570672
@@ -572,8 +572,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ec222a4eb7e84df2a0a1c8c94cf1452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterType: 2
-  velocityScale: 1.4
+  filterType: 0
+  velocityScale: 2
   maxVelocity: 10
   minVelocity: 0.1
   movementScale: 0
