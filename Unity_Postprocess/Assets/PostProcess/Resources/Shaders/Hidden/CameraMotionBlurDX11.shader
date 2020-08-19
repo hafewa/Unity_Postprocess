@@ -30,7 +30,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		{
 			for (int x = 0; x < (int)_MaxRadiusOrKInPaper; x++) 
 			{
-				float2 v = tex2D(_MainTex, srcPos + float2(x,y) * _MainTex_TexelSize.xy).xy;
+				float2 v = tex2D(_MainTex, TRANSFORM_TEX(srcPos + float2(x, y) * _MainTex_TexelSize.xy, _MainTex)).xy;
 				tilemax = VectorMax(tilemax, v);
 			}
 		}
@@ -45,7 +45,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		{
 			for (int x = -1; x <= 1; x++) 
 			{
-				float2 v = tex2D(_MainTex, i.uv + float2(x,y) * _MainTex_TexelSize.xy).xy;
+				float2 v = tex2D(_MainTex, TRANSFORM_TEX(i.uv + float2(x, y) * _MainTex_TexelSize.xy, _MainTex)).xy;
 				maxvel = VectorMax(maxvel, v);
 			}
 		}
@@ -66,12 +66,17 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 #endif
 
 		float2 x2 = xf;
-		float2 vn = tex2D(_NeighbourMaxTex, x2).xy;	// largest velocity in neighbourhood
-		float4 cx = tex2D(_MainTex, x);				// color at x
+		// largest velocity in neighbourhood
+		float2 vn = tex2D(_NeighbourMaxTex, x2).xy;
 
+		// color at x
+		float4 cx = tex2D(_MainTex, x);
 		float zx = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, x);
-		zx = -Linear01Depth(zx);					// depth at x
-		float2 vx = tex2D(_VelTex, xf).xy;			// vel at x 
+		// depth at x
+		zx = -Linear01Depth(zx);
+
+		// vel at x 
+		float2 vx = tex2D(_VelTex, xf).xy;	
 
 		// random offset [-0.5, 0.5]
 		float j = (tex2D(_NoiseTex, i.uv * 11.0f).r * 2 - 1) * _Jitter;
@@ -82,6 +87,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 
 		int centerSample = (int)(NUM_SAMPLES - 1) / 2;
 
+		[unroll]
 		for (int l = 0; l < NUM_SAMPLES; l++)
 		{
 			if (l == centerSample)
@@ -110,10 +116,10 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 			zy = -Linear01Depth(zy);
 			float f = SoftDepthCompare(zx, zy);
 			float b = SoftDepthCompare(zy, zx);
-			float alphay = f * Cone(y, x, vy) +	// blurry y in front of any x
-						   b * Cone(x, y, vx) +	// any y behing blurry x; estimate background
-						   Cylinder(y, x, vy) * Cylinder(x, y, vx) * 2.0;	// simultaneous blurry x and y
-
+			// blurry y in front of any x
+			// any y behing blurry x; estimate background
+			// simultaneous blurry x and y
+			float alphay = f * Cone(y, x, vy) + b * Cone(x, y, vx) + Cylinder(y, x, vy) * Cylinder(x, y, vx) * 2.0;
 			float4 cy = tex2Dlod(_MainTex, float4(y,0,0));
 			sum += cy * alphay;
 			weight += alphay;

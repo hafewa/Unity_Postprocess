@@ -8,7 +8,8 @@
 
 	CGINCLUDE
 	#include "UnityCG.cginc"
-	sampler2D _MainTex, _SourceTex;
+	sampler2D _MainTex, _SourceTex; 
+	float4 _MainTex_ST, _SourceTex_ST;
 	float4 _MainTex_TexelSize;
 	half4 _Filter;
 	float4 _Color;
@@ -36,7 +37,7 @@
 
 	half3 sample (float2 uv)
 	{
-		return tex2D(_MainTex, uv).rgb;
+		return tex2D(_MainTex, TRANSFORM_TEX(uv, _MainTex)).rgb;
 	}
 
 	half3 sampleBox(float2 uv, float delta)
@@ -112,7 +113,7 @@
 			#pragma fragment frag
 			half4 frag(v2f i) : SV_Target
 			{
-				half4 c = tex2D(_SourceTex, i.uv);
+				half4 c = tex2D(_SourceTex, TRANSFORM_TEX(i.uv, _SourceTex));
 				c.rgb += _Intensity * sampleBox(i.uv, 0.5);
 				c.rgb += _Color.rgb;
 				return c;

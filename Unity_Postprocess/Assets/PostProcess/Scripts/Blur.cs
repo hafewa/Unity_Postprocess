@@ -14,11 +14,14 @@ namespace PostProcess
 		[SerializeField][Range(0, 20)]
 		private float resolution = 0;
 
-		private float dispersion = 4f;
+		//[SerializeField][Range(0, 20)]
+		//private float dispersion = 4f;
 
 		private int iteration = 8;
 
 		public float Resolution { get => resolution; set => resolution = value; }
+
+		//public float Dispersion { get => dispersion; set => dispersion = value; }
 
 
 		private float[] CalcWeight(float dispersion, int count)
@@ -37,7 +40,12 @@ namespace PostProcess
 			return weight;
 		}
 
-		private void OnRenderImage(RenderTexture source, RenderTexture dest)
+		/// <summary>
+		/// ImageEffect Opaque
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			if (material == null)
 			{
@@ -45,9 +53,9 @@ namespace PostProcess
 				material.hideFlags = HideFlags.HideAndDontSave;
 			}
 
-			if (resolution <= 0)
+			if (resolution <= 0 || material == null)
 			{
-				Graphics.Blit(source, dest);
+				Graphics.Blit(source, destination);
 				return;
 			}
 
@@ -59,12 +67,12 @@ namespace PostProcess
 			command.GetTemporaryRT(rt2, -value, -value, 0, FilterMode.Trilinear);
 
 			//var weight = CalcWeight(this.dispersion, this.iteration);
-			//this.material.SetFloatArray(PIXEL_ID, weight);
+			//material.SetFloatArray(PIXEL_ID, weight);
 
 			command.SetGlobalVector(PIXEL_ID, new Vector4(resolution / Screen.width * 0.5f, resolution / Screen.height * 0.5f, 0, 0));
 			command.Blit((RenderTargetIdentifier)source, rt1, this.material, 0);
 			command.Blit(rt1, rt2, material, 1);
-			command.Blit(rt2, dest);
+			command.Blit(rt2, destination);
 			Graphics.ExecuteCommandBuffer(command);
 		}
 	}

@@ -44,8 +44,13 @@ namespace PostProcess
 		[SerializeField]
 		private int iterations = 4;
 
-		RenderTexture[] textures = new RenderTexture[8];
+		private RenderTexture[] textures = new RenderTexture[8];
 
+		/// <summary>
+		/// ImageEffect Opaque
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			if (material == null)

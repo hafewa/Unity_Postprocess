@@ -54,6 +54,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	{
 		float2 depth_uv = i.uv;
 
+// ImageEffect‚Åã‰º”½“]‚·‚éê‡‚Ì‘Îô
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 		{
@@ -61,19 +62,18 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		}
 #endif
 
-		float d = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, depth_uv);
-		float3 clipPos = float3(i.uv.x*2.0 - 1.0, (i.uv.y)*2.0 - 1.0, d);
+		float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, depth_uv);
+		float3 clipPos = float3((i.uv.x) * 2.0 - 1.0, (i.uv.y) * 2.0 - 1.0, depth);
 
 		// only 1 matrix mul:
 		float4 prevClipPos = mul(_ToPrevViewProjCombined, float4(clipPos, 1.0));
 		prevClipPos.xyz /= prevClipPos.w;
 
-		float2 vel = _MainTex_TexelSize.zw * _VelocityScale * (clipPos.xy - prevClipPos.xy) / 2.f;
-		float vellen = length(vel);
-		float maxVel = _MaxVelocity;
-		float2 velOut = vel * max(0.5, min(vellen, maxVel)) / (vellen + 1e-2f);
-		velOut *= _MainTex_TexelSize.xy;
-		return float4(velOut, 0.0, 0.0);
+		float2 velocity = _MainTex_TexelSize.zw * _VelocityScale * (clipPos.xy - prevClipPos.xy) / 2.f;
+		float velocityLength = length(velocity);
+		float2 velocityOut = velocity * max(0.5, min(velocityLength, _MaxVelocity)) / (velocityLength + 1e-2f);
+		velocityOut *= _MainTex_TexelSize.xy;
+		return float4(velocityOut, 0.0, 0.0);
 	}
 
 	// pass 1
@@ -98,15 +98,15 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	half4 NeighbourMax(v2f i) : SV_Target
 	{
 		float2 x_ = i.uv;
-		float2 nx = tex2D(_MainTex, x_ + float2(1.0, 1.0)*_MainTex_TexelSize.xy).xy;
-		nx = VectorMax(nx, tex2D(_MainTex, x_ + float2(1.0, 0.0)*_MainTex_TexelSize.xy).xy);
-		nx = VectorMax(nx, tex2D(_MainTex, x_ + float2(1.0,-1.0)*_MainTex_TexelSize.xy).xy);
-		nx = VectorMax(nx, tex2D(_MainTex, x_ + float2(0.0, 1.0)*_MainTex_TexelSize.xy).xy);
-		nx = VectorMax(nx, tex2D(_MainTex, x_ + float2(0.0, 0.0)*_MainTex_TexelSize.xy).xy);
-		nx = VectorMax(nx, tex2D(_MainTex, x_ + float2(0.0,-1.0)*_MainTex_TexelSize.xy).xy);
-		nx = VectorMax(nx, tex2D(_MainTex, x_ + float2(-1.0, 1.0)*_MainTex_TexelSize.xy).xy);
-		nx = VectorMax(nx, tex2D(_MainTex, x_ + float2(-1.0, 0.0)*_MainTex_TexelSize.xy).xy);
-		nx = VectorMax(nx, tex2D(_MainTex, x_ + float2(-1.0,-1.0)*_MainTex_TexelSize.xy).xy);
+		float2 nx = tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(1.0, 1.0) * _MainTex_TexelSize.xy, _MainTex)).xy;
+		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(1.0, 0.0)   * _MainTex_TexelSize.xy, _MainTex)).xy);
+		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(1.0, -1.0)  * _MainTex_TexelSize.xy, _MainTex)).xy);
+		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(0.0, 1.0)   * _MainTex_TexelSize.xy, _MainTex)).xy);
+		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(0.0, 0.0)   * _MainTex_TexelSize.xy, _MainTex)).xy);
+		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(0.0, -1.0)  * _MainTex_TexelSize.xy, _MainTex)).xy);
+		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(-1.0, 1.0)  * _MainTex_TexelSize.xy, _MainTex)).xy);
+		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(-1.0, 0.0)  * _MainTex_TexelSize.xy, _MainTex)).xy);
+		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(-1.0, -1.0) * _MainTex_TexelSize.xy, _MainTex)).xy);
 
 		return float4(nx, 0, 0);
 	}
@@ -117,6 +117,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		float2 x = i.uv;
 		float2 xf = x;
 
+// ImageEffect‚Åã‰º”½“]‚·‚éê‡‚Ì‘Îô
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 		{
@@ -147,6 +148,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 
 		int centerSample = (int)(NUM_SAMPLES - 1) / 2;
 
+		[unroll]
 		for (int l = 0; l < NUM_SAMPLES; l++)
 		{
 			float contrib = 1.0f;
@@ -167,6 +169,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			float2 y = x + vn * t;
 
 			float2 yf = y;
+// ImageEffect‚Åã‰º”½“]‚·‚éê‡‚Ì‘Îô
 #if UNITY_UV_STARTS_AT_TOP
 			if (_MainTex_TexelSize.y < 0)
 			{
@@ -196,6 +199,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		float2 x = i.uv;
 		float2 xf = x;
 
+// ImageEffect‚Åã‰º”½“]‚·‚éê‡‚Ì‘Îô
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 		{
@@ -204,15 +208,16 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 #endif
 
 		// velocity at x
-		float2 vx = tex2D(_VelTex, xf).xy;
+		float2 vx = tex2D(_VelTex, TRANSFORM_TEX(xf, _VelTex)).xy;
 		float4 sum = float4(0, 0, 0, 0);
 
+		[unroll]
 		for (int l = 0; l < NUM_SAMPLES; l++)
 		{
 			float t = l / (float)(NUM_SAMPLES - 1);
 			t = t - 0.5;
 			float2 y = x - vx * t;
-			float4 cy = tex2D(_MainTex, y);
+			float4 cy = tex2D(_MainTex, TRANSFORM_TEX(y, _MainTex));
 			sum += cy;
 		}
 		sum /= NUM_SAMPLES;
@@ -240,15 +245,16 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			velMag = _MaxVelocity;
 		}
 
-		float4 centerTap = tex2D(_MainTex, x);
+		float4 centerTap = tex2D(_MainTex, TRANSFORM_TEX(x, _MainTex));
 		float4 sum = centerTap;
 		blurDir *= smoothstep(_MinVelocity * 0.25f, _MinVelocity * 2.5, velMag);
 		blurDir *= _MainTex_TexelSize.xy;
 		blurDir /= MOTION_SAMPLES;
 
+		[unroll]
 		for (int i = 0; i < MOTION_SAMPLES; i++)
 		{
-			float4 tap = tex2D(_MainTex, x + i * blurDir);
+			float4 tap = tex2D(_MainTex, TRANSFORM_TEX(x + i * blurDir, _MainTex));
 			sum += tap;
 		}
 		return sum / (1 + MOTION_SAMPLES);
@@ -260,6 +266,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		float2 xf = i.uv;
 		float2 x = i.uv;
 
+// ImageEffect‚Åã‰º”½“]‚·‚éê‡‚Ì‘Îô
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 		{
@@ -287,10 +294,13 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		jitteredDir = max(abs(jitteredDir.xyxy), _MainTex_TexelSize.xyxy * _MaxVelocity * 0.15) * sign(jitteredDir.xyxy)  * float4(1,1,-1,-1);
 #endif
 
+		[unroll]
 		for (int l = 0; l < SmallDiscKernelSamples; l++)
 		{
 			float4 y = i.uv.xyxy + jitteredDir.xyxy * SmallDiscKernel[l].xyxy * float4(1,1,-1,-1);
 			float4 yf = y;
+
+// ImageEffect‚Åã‰º”½“]‚·‚éê‡‚Ì‘Îô
 #if UNITY_UV_STARTS_AT_TOP
 			if (_MainTex_TexelSize.y < 0)
 			{

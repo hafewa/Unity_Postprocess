@@ -336,7 +336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ea050ae08413aa4bbe7972b18e94da0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 3.45
+  resolution: 0
 --- !u!114 &80564868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,8 +349,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09142e4e01e33dd448f01b038ad97d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: 1
-  threshold: 0.71
+  intensity: 2.02
+  threshold: 0.9
   softThreshold: 0.213
   color: {r: 0.07925418, g: 0.08876497, b: 0.122641504, a: 1}
   debug: 0
@@ -362,13 +362,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 80564862}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee37b3ebc15ce4b4383d6c79b591ed24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intencity1: 10
-  threshold1: 0.47
+  intencity1: 3.4
+  threshold1: 0.36
   radius1: 6.76
   intencity2: 3.5
   threshold2: 2.84

@@ -11,7 +11,7 @@ Shader "Hidden/PostProcess/MotionBlur"
 	#include "UnityCG.cginc"
 	sampler2D _MainTex; float4 _MainTex_ST;
 
-	struct appdata_t
+	struct appdata
 	{
 		float4 vertex : POSITION;
 		float2 texcoord : TEXCOORD;
@@ -23,7 +23,7 @@ Shader "Hidden/PostProcess/MotionBlur"
 		float2 texcoord : TEXCOORD;
 	};
 
-	v2f vert(appdata_t v)
+	v2f vert(appdata v)
 	{
 		v2f o;
 		o.vertex = UnityObjectToClipPos(v.vertex);

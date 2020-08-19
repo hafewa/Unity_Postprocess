@@ -418,7 +418,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1359243176}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 543ddbe12367a4899b011d43ef41f357, type: 3}
   m_Name: 
@@ -446,6 +446,7 @@ GameObject:
   - component: {fileID: 1603570668}
   - component: {fileID: 1603570674}
   - component: {fileID: 1603570675}
+  - component: {fileID: 1603570669}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -475,6 +476,21 @@ MonoBehaviour:
   _rotationScale: {x: 1, y: 1, z: 1}
   _positionFractalLevel: 3
   _rotationFractalLevel: 1
+--- !u!114 &1603570669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603570667}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 578fcced2af54fe41bdd16affb8d10e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  R: {x: 0.05, y: 0.05}
+  G: {x: 0.05, y: 0.05}
+  B: {x: 0.07, y: 0}
 --- !u!20 &1603570672
 Camera:
   m_ObjectHideFlags: 0
@@ -544,8 +560,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ec222a4eb7e84df2a0a1c8c94cf1452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterType: 0
-  velocityScale: 2
+  filterType: 2
+  velocityScale: 2.97
   maxVelocity: 10
   minVelocity: 0.1
   movementScale: 0
