@@ -32,7 +32,7 @@ Shader "Hidden/PostProcess/Fog"
 	float2 _ScrollSpeed;
 	float _FogNoiseScale;
 
-	struct v2f
+	struct VSOutput
 	{
 		float4 pos : SV_POSITION;
 		float2 uv : TEXCOORD0;
@@ -73,9 +73,9 @@ Shader "Hidden/PostProcess/Fog"
 		return g;
 	}
 
-	v2f vert(appdata_img v)
+	VSOutput VSMain(appdata_img v)
 	{
-		v2f o;
+		VSOutput o;
 		half index = v.vertex.z;
 		v.vertex.z = 0.1;
 		o.pos = UnityObjectToClipPos(v.vertex);
@@ -93,7 +93,7 @@ Shader "Hidden/PostProcess/Fog"
 		return o;
 	}
 
-	float4 frag(v2f i) : SV_Target
+	float4 PSMain(VSOutput i) : SV_Target
 	{
 		float4 color = tex2D(_MainTex, i.uv);
 		float rawDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv_depth);
@@ -129,8 +129,9 @@ Shader "Hidden/PostProcess/Fog"
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
+			#pragma target 3.0
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 			#pragma multi_compile DISTANCE_FOG HEIGHT_FOG
 			ENDCG
 		}

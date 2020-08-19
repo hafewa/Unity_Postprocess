@@ -7,16 +7,15 @@
 
 	SubShader
 	{
-		Cull Off
-		ZTest Always
-		ZWrite Off
-
 		Tags { "RenderType" = "Opaque" }
+
+		Cull Off ZWrite Off ZTest Always
 
 		// 0: 明度を抽出するパス
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
 
@@ -61,6 +60,7 @@
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
 
@@ -103,7 +103,8 @@
 				half4 col = half4(0, 0, 0, 1);
 
 				half2 uv = i.uv;
-				for (int j = 0; j < _Iteration; ++j) {
+				for (int j = 0; j < _Iteration; ++j) 
+				{
 					col.rgb += tex2D(_MainTex, uv) * pow(_Attenuation, j * i.pathFactor);
 					uv += i.uvOffset;
 				}
@@ -118,6 +119,7 @@
 			Blend One One
 			ColorMask RGB
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
@@ -147,7 +149,7 @@
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				return tex2D(_MainTex, i.uv) * _Intensity / 2;
+				return tex2D(_MainTex, i.uv) * _Intensity;
 			}
 			ENDCG
 		}

@@ -234,7 +234,7 @@ namespace PostProcess
 		}
 
 		/// <summary>
-		/// Update RenderImage
+		/// ImageEffect Opaque
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>

@@ -120,14 +120,13 @@
 
 	SubShader
 	{
+		ZTest Off Cull Off ZWrite Off 
+		Fog{ Mode Off }
+
 		Pass
 		{
-			ZTest Off
-			Cull Off
-			ZWrite Off
-			Fog{ Mode Off }
-
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert_threshold
 			#pragma fragment frag_threshold
 			ENDCG
@@ -135,12 +134,8 @@
 
 		Pass
 		{
-			ZTest Off
-			Cull Off
-			ZWrite Off
-			Fog{ Mode Off }
-
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert_blur
 			#pragma fragment frag_blur
 			ENDCG
@@ -148,13 +143,8 @@
 
 		Pass
 		{
-
-			ZTest Off
-			Cull Off
-			ZWrite Off
-			Fog{ Mode Off }
-
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert_merge
 			#pragma fragment frag_merge
 			ENDCG

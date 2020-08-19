@@ -16,18 +16,18 @@ Shader "Hidden/PostProcess/MotionBlurClear"
 			ZWrite Off // lame depth test
 
 			CGPROGRAM
-
-			#pragma vertex vert
-			#pragma fragment frag
+			#pragma target 3.0
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 
 			#include "UnityCG.cginc"
 
-			struct appdata 
+			struct VSInput 
 			{
 				float4 vertex : POSITION;
 			};
 
-			struct v2f 
+			struct VSOutput 
 			{
 				float4 pos : SV_POSITION;
 				float4 screen : TEXCOORD0;
@@ -35,16 +35,16 @@ Shader "Hidden/PostProcess/MotionBlurClear"
 
 			sampler2D _CameraDepthTexture;
 
-			v2f vert(appdata v)
+			VSOutput VSMain(VSInput v)
 			{
-				v2f o;
+				VSOutput o;
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.screen = ComputeScreenPos(o.pos);
 				COMPUTE_EYEDEPTH(o.screen.z);
 				return o;
 			}
 
-			float4 frag(v2f i) : SV_Target
+			float4 PSMain(VSOutput i) : SV_Target
 			{
 				// superlame: manual depth test needed as we can't bind depth, FIXME for 4.x
 				// alternatively implement SM > 3 version where we write out custom depth

@@ -8,15 +8,18 @@ namespace PostProcess
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
 	public sealed class Bloom : PostProcessBase
 	{
+		private enum Pass
+		{
+			Prefilter = 0,
+			Down = 1,
+			Up = 2,
+			Final = 3,
+		}
+
 		static readonly int FILTER_PROP_ID = Shader.PropertyToID("_Filter");
 		static readonly int COLOR_PROP_ID = Shader.PropertyToID("_Color");
 		static readonly int INTENSITY_PROP_ID = Shader.PropertyToID("_Intensity");
 		static readonly int SOURCE_PROP_ID = Shader.PropertyToID("_SourceTex");
-		const int BoxDownPrefilterPass = 0;
-		const int BoxDownPass = 1;
-		const int BoxUpPass = 2;
-		const int ApplyBloomPass = 3;
-		const int DebugBloomPass = 4;
 
 		public float Intensity { get => intensity; set => intensity = value; }
 
@@ -35,11 +38,11 @@ namespace PostProcess
 		[SerializeField][Range(0, 1)]
 		private float softThreshold = 0.5f;
 
+		[SerializeField][Range(1, 4)]
+		private int resolution = 1;
+
 		[SerializeField, ColorUsage(false, true)]
 		private Color color = Color.black;
-
-		[SerializeField]
-		private bool debug;
 
 		[SerializeField]
 		private int iterations = 4;
@@ -66,7 +69,7 @@ namespace PostProcess
 			}
 
 			float knee = threshold * softThreshold;
-			Vector4 filter;
+			Vector4 filter = Vector4.zero;
 			filter.x = threshold;
 			filter.y = threshold - knee;
 			filter.z = knee * 2f;
@@ -75,12 +78,12 @@ namespace PostProcess
 			material.SetColor(COLOR_PROP_ID, color);
 			material.SetFloat(INTENSITY_PROP_ID, Mathf.GammaToLinearSpace(intensity));
 
-			int width = source.width / 2;
-			int height = source.height / 2;
+			int width = source.width / resolution;
+			int height = source.height / resolution;
 			RenderTextureFormat format = source.format;
 
 			RenderTexture currentDestination = textures[0] = RenderTexture.GetTemporary(width, height, 0, format);
-			Graphics.Blit(source, currentDestination, material, BoxDownPrefilterPass);
+			Graphics.Blit(source, currentDestination, material, (int)Pass.Prefilter);
 			RenderTexture currentSource = currentDestination;
 
 			int i = 1;
@@ -93,7 +96,7 @@ namespace PostProcess
 					break;
 				}
 				currentDestination = textures[i] = RenderTexture.GetTemporary(width, height, 0, format);
-				Graphics.Blit(currentSource, currentDestination, material, BoxDownPass);
+				Graphics.Blit(currentSource, currentDestination, material, (int)Pass.Down);
 				currentSource = currentDestination;
 			}
 
@@ -101,20 +104,13 @@ namespace PostProcess
 			{
 				currentDestination = textures[i];
 				textures[i] = null;
-				Graphics.Blit(currentSource, currentDestination, material, BoxUpPass);
+				Graphics.Blit(currentSource, currentDestination, material, (int)Pass.Up);
 				RenderTexture.ReleaseTemporary(currentSource);
 				currentSource = currentDestination;
 			}
 
-			if (debug)
-			{
-				Graphics.Blit(currentSource, destination, material, DebugBloomPass);
-			}
-			else
-			{
-				material.SetTexture(SOURCE_PROP_ID, source);
-				Graphics.Blit(currentSource, destination, material, ApplyBloomPass);
-			}
+			material.SetTexture(SOURCE_PROP_ID, source);
+			Graphics.Blit(currentSource, destination, material, (int)Pass.Final);
 			RenderTexture.ReleaseTemporary(currentSource);
 		}
 	}

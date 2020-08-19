@@ -9,47 +9,37 @@ Shader "Hidden/PostProcess/Blur"
 
 	SubShader
 	{
-		Tags
-		{
-			"Queue" = "Transparent"
-			"IgnoreProjector" = "True"
-			"RenderType" = "Transparent"
-		}
-
-		// No culling or depth
 		Cull Off ZWrite Off ZTest Always
-		Blend SrcAlpha OneMinusSrcAlpha
 
 		CGINCLUDE
-		#include "UnityCG.cginc"
 		#include "UnityCG.cginc"
 
 		sampler2D _MainTex;
 		float4 _MainTex_TexelSize;
 		float _ReversePass;
 
-		struct appdata
+		struct VSInput
 		{
 			float4 vertex : POSITION;
 			float2 uv : TEXCOORD0;
 		};
 
-		struct v2f
+		struct VSOutput
 		{
 			float2 uv : TEXCOORD0;
 			float4 vertex : SV_POSITION;
 			float2 offs : TEXCOORD1;
 		};
 
-		v2f vert(appdata v)
+		VSOutput VSMain(VSInput v)
 		{
-			v2f o;
+			VSOutput o;
 			o.vertex = UnityObjectToClipPos(v.vertex);
 			o.uv = v.uv;
 			return o;
 		}
 
-		float4 fragPass1(v2f i) : SV_Target
+		float4 PSMain1(VSOutput i) : SV_Target
 		{
 			float4 col = 0;
 			float2 unit = _ReversePass > 0.5 ? float2(_MainTex_TexelSize.x, 0) : float2(0,_MainTex_TexelSize.y);
@@ -63,7 +53,7 @@ Shader "Hidden/PostProcess/Blur"
 			return col;
 		}
 
-		float4 fragPass2(v2f i) : SV_Target
+		float4 PSMain2(VSOutput i) : SV_Target
 		{
 			float4 col = 0;
 			float2 unit = _ReversePass > 0.5 ? float2(0,_MainTex_TexelSize.y) : float2(_MainTex_TexelSize.x, 0);
@@ -81,16 +71,16 @@ Shader "Hidden/PostProcess/Blur"
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment fragPass1
+			#pragma vertex VSMain
+			#pragma fragment PSMain1
 			ENDCG
 		}
 
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment fragPass2
+			#pragma vertex VSMain
+			#pragma fragment PSMain2
 			ENDCG
 		}
 	}

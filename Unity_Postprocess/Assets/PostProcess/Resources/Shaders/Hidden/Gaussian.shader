@@ -109,6 +109,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag_threshold
 			ENDCG
@@ -117,6 +118,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag_cross_bloom
 			ENDCG
@@ -125,6 +127,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag_gaussian_x
 			ENDCG
@@ -133,6 +136,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag_gaussian_y
 			ENDCG
@@ -141,6 +145,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag_add
 			ENDCG

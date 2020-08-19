@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Klak.Tools
+namespace Motion.Tools
 {
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(BrownianMotion))]

@@ -12,7 +12,7 @@
 	float4 _MainTex_ST, _SourceTex_ST;
 	float4 _MainTex_TexelSize;
 	half4 _Filter;
-	float4 _Color;
+	half4 _Color;
 	half _Intensity;
 
 	struct appdata
@@ -61,14 +61,13 @@
 
 	SubShader
 	{
-		Cull Off
-		ZTest Always
-		ZWrite Off
+		Cull Off ZWrite Off ZTest Always
 
 		// current
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
 			half4 frag(v2f i) : SV_Target
@@ -82,6 +81,7 @@
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
 			half4 frag(v2f i) : SV_Target
@@ -96,6 +96,7 @@
 		{
 			Blend One One
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
 			half4 frag(v2f i) : SV_Target
@@ -109,6 +110,7 @@
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
 			half4 frag(v2f i) : SV_Target
@@ -120,19 +122,7 @@
 			}
 			ENDCG
 		}
-
-		// debug 
-		Pass
-		{
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			half4 frag(v2f i) : SV_Target
-			{
-				return half4(_Intensity * sampleBox(i.uv, 0.5), 1);
-			}
-			ENDCG
-		}
 	}
-	Fallback Off
+
+	//
 }

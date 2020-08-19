@@ -12,34 +12,34 @@
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-
+			#pragma target 3.0
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 			#include "UnityCG.cginc"
 
 			sampler2D _MainTex; float4 _MainTex_TexelSize;
 
-			struct appdata
+			struct VSInput
 			{
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
 			};
 
-			struct v2f
+			struct VSOutput
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
 
-			v2f vert(appdata v)
+			VSOutput VSMain(VSInput v)
 			{
-				v2f o;
+				VSOutput o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				return o;
 			}
 
-			fixed4 frag(v2f i) : SV_Target
+			fixed4 PSMain(VSOutput i) : SV_Target
 			{
 				// Luminance
 				half3 luma = half3(0.30, 0.59, 0.11);
@@ -70,9 +70,9 @@
 				half yMin = min(min(yNW, yNE), min(ySW, ySE));
 				half yMax = max(max(yNW, yNE), max(ySW, ySE));
 				fixed4 color = fixed4((yB < yMin || yB > yMax) ? rgbA : rgbB, 1.0);
-
 				return color;
 			}
+
 			ENDCG
 		}
 	}

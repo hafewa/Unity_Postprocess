@@ -31,6 +31,11 @@ namespace PostProcess
 		[SerializeField][Range(0f, 50f)]
 		private float radius = 0.1f;
 
+		/// <summary>
+		/// ImageEffect Opaque
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			if (material == null)

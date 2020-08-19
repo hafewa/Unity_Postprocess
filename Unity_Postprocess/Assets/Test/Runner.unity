@@ -147,7 +147,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 9
   m_Type: 1
-  m_Color: {r: 1, g: 0.802726, b: 0.2647059, a: 1}
+  m_Color: {r: 0.6603774, g: 0.54354066, b: 0.22739409, a: 1}
   m_Intensity: 1.8
   m_Range: 10
   m_SpotAngle: 30
@@ -155,10 +155,10 @@ Light:
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
-    m_Resolution: -1
+    m_Resolution: 2
     m_CustomResolution: -1
     m_Strength: 1
-    m_Bias: 0.05
+    m_Bias: 0
     m_NormalBias: 0.4
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
@@ -447,6 +447,7 @@ GameObject:
   - component: {fileID: 1603570674}
   - component: {fileID: 1603570675}
   - component: {fileID: 1603570669}
+  - component: {fileID: 1603570670}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -488,9 +489,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 578fcced2af54fe41bdd16affb8d10e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  R: {x: 0.05, y: 0.05}
-  G: {x: 0.05, y: 0.05}
-  B: {x: 0.07, y: 0}
+  R: {x: 0, y: 0}
+  G: {x: 0, y: 0}
+  B: {x: 0.03, y: 0.13}
+--- !u!114 &1603570670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603570667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09142e4e01e33dd448f01b038ad97d8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  intensity: 0.9
+  threshold: 1.15
+  softThreshold: 0.516
+  resolution: 1
+  color: {r: 0.11320752, g: 0.08490564, b: 0.09919669, a: 1}
+  iterations: 4
 --- !u!20 &1603570672
 Camera:
   m_ObjectHideFlags: 0
@@ -704,35 +723,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8863455356981872915, guid: f57e919d50e2b99488f0ce5a052fbd7f,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8863455356981872915, guid: f57e919d50e2b99488f0ce5a052fbd7f,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8863455356981872915, guid: f57e919d50e2b99488f0ce5a052fbd7f,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.2
-      objectReference: {fileID: 0}
     - target: {fileID: 8863455356982367603, guid: f57e919d50e2b99488f0ce5a052fbd7f,
         type: 3}
       propertyPath: m_Name
       value: Ethan
-      objectReference: {fileID: 0}
-    - target: {fileID: 8863455356989663067, guid: f57e919d50e2b99488f0ce5a052fbd7f,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 178754b9775604340b44ea127c907d04, type: 2}
-    - target: {fileID: 8863455356989663067, guid: f57e919d50e2b99488f0ce5a052fbd7f,
-        type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f57e919d50e2b99488f0ce5a052fbd7f, type: 3}

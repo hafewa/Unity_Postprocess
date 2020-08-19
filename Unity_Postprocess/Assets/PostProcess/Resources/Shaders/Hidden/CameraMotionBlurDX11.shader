@@ -131,10 +131,11 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 
 	SubShader 
 	{
+		ZTest Always Cull Off ZWrite Off
+
 		// pass 0
 		Pass
 		{
-			ZTest Always Cull Off ZWrite Off
 			CGPROGRAM
 			#pragma target 5.0
 			#pragma vertex vert
@@ -145,7 +146,6 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		// pass 1
 		Pass
 		{
-			ZTest Always Cull Off ZWrite Off
 			CGPROGRAM
 			#pragma target 5.0
 			#pragma vertex vert
@@ -156,7 +156,6 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		// pass 2
 		Pass
 		{
-			ZTest Always Cull Off ZWrite Off
 			CGPROGRAM
 			#pragma target 5.0
 			#pragma vertex vert 

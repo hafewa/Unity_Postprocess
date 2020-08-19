@@ -7,7 +7,11 @@ namespace PostProcess
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
 	public sealed class FXAA : PostProcessBase
 	{
-
+		/// <summary>
+		/// ImageEffect Opaque
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			if (material == null)

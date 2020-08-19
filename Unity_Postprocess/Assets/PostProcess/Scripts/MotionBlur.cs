@@ -31,6 +31,11 @@ namespace PostProcess
 			}
 		}
 
+		/// <summary>
+		/// ImageEffect Opaque
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			if (material == null)
@@ -70,13 +75,12 @@ namespace PostProcess
 				RenderTexture.ReleaseTemporary(blurbuffer);
 			}
 
-			blurAmount = Mathf.Clamp(blurAmount, 0.0f, 0.92f);
 
 			material.SetTexture("_MainTex", accumTexture);
-			material.SetFloat("_AccumOrig", 1.0f - blurAmount);
+			material.SetFloat("_AccumOrig", 1.0f - Mathf.Clamp(blurAmount, 0.0f, 0.92f));
 
+			// restoreèàóùÇçsÇ§
 			accumTexture.MarkRestoreExpected();
-
 			Graphics.Blit(source, accumTexture, material);
 			Graphics.Blit(accumTexture, destination);
 		}

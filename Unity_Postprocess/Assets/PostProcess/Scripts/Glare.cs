@@ -27,6 +27,11 @@ namespace PostProcess
 		[SerializeField, Range(0f, 2f)]
 		private float valueX, valueY;
 
+		/// <summary>
+		/// ImageEffect Opaque
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture dest)
 		{
 			if (material == null)

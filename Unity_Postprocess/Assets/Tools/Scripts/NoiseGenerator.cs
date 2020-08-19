@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-namespace Klak.Tools
+namespace Motion.Tools
 {
 	/// Noise generator that provides Vector3/Quaternion values
 	struct NoiseGenerator

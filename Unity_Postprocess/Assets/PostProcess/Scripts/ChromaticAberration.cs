@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 namespace PostProcess
 {
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
-	public class ChromaticAberration : PostProcessBase
+	public sealed class ChromaticAberration : PostProcessBase
 	{
 		static readonly int PROP_R = Shader.PropertyToID("_ROffset");
 		static readonly int PROP_G = Shader.PropertyToID("_GOffset");
@@ -17,7 +17,11 @@ namespace PostProcess
 		public Vector2 G = default;
 		public Vector2 B = default;
 
-
+		/// <summary>
+		/// ImageEffect Opaque
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			if (material == null)

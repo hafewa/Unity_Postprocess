@@ -1,6 +1,6 @@
 
 
-namespace Klak.Tools
+namespace Motion.Tools
 {
 	/// xxHash algorithm
 	public struct XXHash

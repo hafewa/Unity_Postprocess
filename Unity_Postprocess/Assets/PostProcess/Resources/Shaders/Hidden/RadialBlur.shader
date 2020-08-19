@@ -12,31 +12,31 @@
 
 	SubShader
 	{
-		// No culling or depth
 		Cull Off ZWrite Off ZTest Always
 
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
+			#pragma target 3.0
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 			#include "UnityCG.cginc"
 
-			struct appdata
+			struct VSInput
 			{
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
 			};
 
-			struct v2f
+			struct VSOutput
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
 
-			v2f vert(appdata v)
+			VSOutput VSMain(VSInput v)
 			{
-				v2f o;
+				VSOutput o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				return o;
@@ -49,7 +49,7 @@
 			half _CenterY;
 			half _Radius;
 
-			fixed4 frag(v2f i) : SV_Target
+			fixed4 PSMain(VSOutput i) : SV_Target
 			{
 				fixed4 col = fixed4(0,0,0,0);
 				float2 dist = i.uv - float2(_CenterX, _CenterY);

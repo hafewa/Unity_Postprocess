@@ -5,7 +5,7 @@
 
 using UnityEngine;
 
-namespace Klak.Tools
+namespace Motion.Tools
 {
 	public static class Perlin
 	{

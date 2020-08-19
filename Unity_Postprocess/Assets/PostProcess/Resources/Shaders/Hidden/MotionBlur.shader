@@ -11,21 +11,21 @@ Shader "Hidden/PostProcess/MotionBlur"
 	#include "UnityCG.cginc"
 	sampler2D _MainTex; float4 _MainTex_ST;
 
-	struct appdata
+	struct VSInput
 	{
 		float4 vertex : POSITION;
 		float2 texcoord : TEXCOORD;
 	};
 
-	struct v2f
+	struct VSOutput
 	{
 		float4 vertex : SV_POSITION;
 		float2 texcoord : TEXCOORD;
 	};
 
-	v2f vert(appdata v)
+	VSOutput VSMain(VSInput v)
 	{
-		v2f o;
+		VSOutput o;
 		o.vertex = UnityObjectToClipPos(v.vertex);
 		o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 		return o;
@@ -47,12 +47,13 @@ Shader "Hidden/PostProcess/MotionBlur"
 			}
 
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
+			#pragma target 3.0
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 
 			fixed _AccumOrig;
 
-			half4 frag(v2f i) : SV_Target
+			half4 PSMain(VSOutput i) : SV_Target
 			{
 				return half4(tex2D(_MainTex, i.texcoord).rgb, _AccumOrig);
 			}
@@ -71,10 +72,11 @@ Shader "Hidden/PostProcess/MotionBlur"
 			}
 
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
+			#pragma target 3.0
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 
-			half4 frag(v2f i) : SV_Target
+			half4 PSMain(VSOutput i) : SV_Target
 			{
 				return tex2D(_MainTex, i.texcoord);
 			}

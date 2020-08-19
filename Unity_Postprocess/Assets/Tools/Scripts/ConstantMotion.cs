@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Klak.Tools
+namespace Motion.Tools
 {
 	public class ConstantMotion : MonoBehaviour
 	{

@@ -70,6 +70,11 @@ namespace PostProcess
 			camera.depthTextureMode |= DepthTextureMode.Depth;
 		}
 
+		/// <summary>
+		/// ImageEffect Opaque
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			if (material == null)
