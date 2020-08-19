@@ -2,6 +2,31 @@
 #define CAMERAMOTIONBLURUTIL_INCLUDED
 
 float _SoftZDistance;
+float _MaxRadiusOrKInPaper;
+
+// inverse view-projection matrix
+float4x4 _InvViewProj;
+
+// previous view-projection matrix
+float4x4 _PrevViewProj;
+
+// combined
+float4x4 _ToPrevViewProjCombined;
+
+sampler2D _MainTex;
+sampler2D _CameraDepthTexture;
+sampler2D _VelTex;
+sampler2D _NeighbourMaxTex;
+sampler2D _NoiseTex;
+
+float4 _MainTex_TexelSize;
+float4 _CameraDepthTexture_TexelSize;
+float4 _VelTex_TexelSize;
+
+half _Jitter, _VelocityScale, _DisplayVelocityScale;
+half _MaxVelocity, _MinVelocity;
+
+
 
 struct v2f
 {

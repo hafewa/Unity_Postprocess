@@ -19,6 +19,7 @@ namespace PostProcess
 		private SerializedProperty showVelocity = default;
 		private SerializedProperty showVelocityScale = default;
 		private SerializedProperty excludeLayers = default;
+		private SerializedProperty softZDistance = default;
 
 		private SerializedObject searchObj = default;
 		private CameraMotionBlur postProcess = default;
@@ -31,6 +32,7 @@ namespace PostProcess
 			rotationScale = searchObj.FindProperty("rotationScale");
 			maxVelocity = searchObj.FindProperty("maxVelocity");
 			minVelocity = searchObj.FindProperty("minVelocity");
+			softZDistance = searchObj.FindProperty("softZDistance");
 
 			jitter = searchObj.FindProperty("jitter");
 			excludeLayers = searchObj.FindProperty("excludeLayers");
@@ -76,6 +78,7 @@ namespace PostProcess
 			EditorGUILayout.PropertyField(velocityScale, new GUIContent("Velocity Scale"));
 			EditorGUILayout.PropertyField(maxVelocity, new GUIContent("Velocity Max"));
 			EditorGUILayout.PropertyField(minVelocity, new GUIContent("Velocity Min"));
+			EditorGUILayout.PropertyField(softZDistance, new GUIContent("Z Distance"));
 
 			EditorGUILayout.Separator();
 			EditorGUILayout.LabelField("Technique Specific");

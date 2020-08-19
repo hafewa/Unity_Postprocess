@@ -28,7 +28,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	#include "CameraMotionBlurUtil.cginc"
 	#define NUM_SAMPLES (11)
 	#define MOTION_SAMPLES (16)
-	float _MaxRadiusOrKInPaper;
 
 	static const int SmallDiscKernelSamples = 12;
 	static const float2 SmallDiscKernel[SmallDiscKernelSamples] =
@@ -47,29 +46,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		float2(-0.791559,-0.59771)
 	};
 
-	sampler2D _MainTex;
-	sampler2D _CameraDepthTexture;
-	sampler2D _VelTex;
-	sampler2D _NeighbourMaxTex;
-	sampler2D _NoiseTex;
 	sampler2D _TileTexDebug;
-
-	float4 _MainTex_TexelSize;
-	float4 _CameraDepthTexture_TexelSize;
-	float4 _VelTex_TexelSize;
-
-	// inverse view-projection matrix
-	float4x4 _InvViewProj;
-
-	// previous view-projection matrix
-	float4x4 _PrevViewProj;
-
-	// combined
-	float4x4 _ToPrevViewProjCombined;
-
-	half _Jitter, _VelocityScale, _DisplayVelocityScale;
-	half _MaxVelocity, _MinVelocity;
-
 	float4 _BlurDirectionPacked;
 
 	// pass 0

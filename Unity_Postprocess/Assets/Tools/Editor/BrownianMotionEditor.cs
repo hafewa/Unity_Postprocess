@@ -8,63 +8,63 @@ namespace Klak.Tools
 	[CustomEditor(typeof(BrownianMotion))]
 	public class BrownianMotionEditor : Editor
 	{
-		private SerializedProperty _enablePositionNoise;
-		private SerializedProperty _enableRotationNoise;
-		private SerializedProperty _positionFrequency;
-		private SerializedProperty _rotationFrequency;
-		private SerializedProperty _positionAmplitude;
-		private SerializedProperty _rotationAmplitude;
-		private SerializedProperty _positionScale;
-		private SerializedProperty _rotationScale;
-		private SerializedProperty _positionFractalLevel;
-		private SerializedProperty _rotationFractalLevel;
+		static readonly GUIContent textPositionNoise = new GUIContent("Position Noise");
+		static readonly GUIContent textRotationNoise = new GUIContent("Rotation Noise");
+		static readonly GUIContent textFrequency = new GUIContent("Frequency");
+		static readonly GUIContent textAmplitude = new GUIContent("Amplitude");
+		static readonly GUIContent textScale = new GUIContent("Scale");
+		static readonly GUIContent textFractal = new GUIContent("Fractal");
 
-		static GUIContent _textPositionNoise = new GUIContent("Position Noise");
-		static GUIContent _textRotationNoise = new GUIContent("Rotation Noise");
-		static GUIContent _textFrequency = new GUIContent("Frequency");
-		static GUIContent _textAmplitude = new GUIContent("Amplitude");
-		static GUIContent _textScale = new GUIContent("Scale");
-		static GUIContent _textFractal = new GUIContent("Fractal");
+		private SerializedProperty enablePositionNoise = default;
+		private SerializedProperty enableRotationNoise = default;
+		private SerializedProperty positionFrequency = default;
+		private SerializedProperty rotationFrequency = default;
+		private SerializedProperty positionAmplitude = default;
+		private SerializedProperty rotationAmplitude = default;
+		private SerializedProperty positionScale = default;
+		private SerializedProperty rotationScale = default;
+		private SerializedProperty positionFractalLevel = default;
+		private SerializedProperty rotationFractalLevel = default;
 
 		private void OnEnable()
 		{
-			_enablePositionNoise = serializedObject.FindProperty("_enablePositionNoise");
-			_enableRotationNoise = serializedObject.FindProperty("_enableRotationNoise");
-			_positionFrequency = serializedObject.FindProperty("_positionFrequency");
-			_rotationFrequency = serializedObject.FindProperty("_rotationFrequency");
-			_positionAmplitude = serializedObject.FindProperty("_positionAmplitude");
-			_rotationAmplitude = serializedObject.FindProperty("_rotationAmplitude");
-			_positionScale = serializedObject.FindProperty("_positionScale");
-			_rotationScale = serializedObject.FindProperty("_rotationScale");
-			_positionFractalLevel = serializedObject.FindProperty("_positionFractalLevel");
-			_rotationFractalLevel = serializedObject.FindProperty("_rotationFractalLevel");
+			enablePositionNoise = serializedObject.FindProperty("_enablePositionNoise");
+			enableRotationNoise = serializedObject.FindProperty("_enableRotationNoise");
+			positionFrequency = serializedObject.FindProperty("_positionFrequency");
+			rotationFrequency = serializedObject.FindProperty("_rotationFrequency");
+			positionAmplitude = serializedObject.FindProperty("_positionAmplitude");
+			rotationAmplitude = serializedObject.FindProperty("_rotationAmplitude");
+			positionScale = serializedObject.FindProperty("_positionScale");
+			rotationScale = serializedObject.FindProperty("_rotationScale");
+			positionFractalLevel = serializedObject.FindProperty("_positionFractalLevel");
+			rotationFractalLevel = serializedObject.FindProperty("_rotationFractalLevel");
 		}
 
 		public override void OnInspectorGUI()
 		{
 			serializedObject.Update();
 
-			EditorGUILayout.PropertyField(_enablePositionNoise, _textPositionNoise);
+			EditorGUILayout.PropertyField(enablePositionNoise, textPositionNoise);
 
-			if (_enablePositionNoise.hasMultipleDifferentValues || _enablePositionNoise.boolValue)
+			if (enablePositionNoise.hasMultipleDifferentValues || enablePositionNoise.boolValue)
 			{
 				EditorGUI.indentLevel++;
-				EditorGUILayout.PropertyField(_positionFrequency, _textFrequency);
-				EditorGUILayout.PropertyField(_positionAmplitude, _textAmplitude);
-				EditorGUILayout.PropertyField(_positionScale, _textScale);
-				EditorGUILayout.PropertyField(_positionFractalLevel, _textFractal);
+				EditorGUILayout.PropertyField(positionFrequency, textFrequency);
+				EditorGUILayout.PropertyField(positionAmplitude, textAmplitude);
+				EditorGUILayout.PropertyField(positionScale, textScale);
+				EditorGUILayout.PropertyField(positionFractalLevel, textFractal);
 				EditorGUI.indentLevel--;
 			}
 
-			EditorGUILayout.PropertyField(_enableRotationNoise, _textRotationNoise);
+			EditorGUILayout.PropertyField(enableRotationNoise, textRotationNoise);
 
-			if (_enableRotationNoise.hasMultipleDifferentValues || _enableRotationNoise.boolValue)
+			if (enableRotationNoise.hasMultipleDifferentValues || enableRotationNoise.boolValue)
 			{
 				EditorGUI.indentLevel++;
-				EditorGUILayout.PropertyField(_rotationFrequency, _textFrequency);
-				EditorGUILayout.PropertyField(_rotationAmplitude, _textAmplitude);
-				EditorGUILayout.PropertyField(_rotationScale, _textScale);
-				EditorGUILayout.PropertyField(_rotationFractalLevel, _textFractal);
+				EditorGUILayout.PropertyField(rotationFrequency, textFrequency);
+				EditorGUILayout.PropertyField(rotationAmplitude, textAmplitude);
+				EditorGUILayout.PropertyField(rotationScale, textScale);
+				EditorGUILayout.PropertyField(rotationFractalLevel, textFractal);
 				EditorGUI.indentLevel--;
 			}
 

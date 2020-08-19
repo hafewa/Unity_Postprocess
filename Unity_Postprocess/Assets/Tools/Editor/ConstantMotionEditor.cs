@@ -8,67 +8,63 @@ namespace Klak.Tools
 	[CustomEditor(typeof(ConstantMotion))]
 	public class ConstantMotionEditor : Editor
 	{
-		private SerializedProperty _translationMode;
-		private SerializedProperty _translationVector;
-		private SerializedProperty _translationSpeed;
+		static readonly GUIContent textLocalCoordinate = new GUIContent("Local Coordinate");
+		static readonly GUIContent textRotation = new GUIContent("Rotation");
+		static readonly GUIContent textSpeed = new GUIContent("Speed");
+		static readonly GUIContent textTranslation = new GUIContent("Translation");
+		static readonly GUIContent textVector = new GUIContent("Vector");
 
-		private SerializedProperty _rotationMode;
-		private SerializedProperty _rotationAxis;
-		private SerializedProperty _rotationSpeed;
-
-		private SerializedProperty _useLocalCoordinate;
-
-		static GUIContent _textLocalCoordinate = new GUIContent("Local Coordinate");
-		static GUIContent _textRotation = new GUIContent("Rotation");
-		static GUIContent _textSpeed = new GUIContent("Speed");
-		static GUIContent _textTranslation = new GUIContent("Translation");
-		static GUIContent _textVector = new GUIContent("Vector");
+		private SerializedProperty translationMode = default;
+		private SerializedProperty translationVector = default;
+		private SerializedProperty translationSpeed = default;
+		private SerializedProperty rotationMode = default;
+		private SerializedProperty rotationAxis = default;
+		private SerializedProperty rotationSpeed = default;
+		private SerializedProperty useLocalCoordinate = default;
 
 		private void OnEnable()
 		{
-			_translationMode = serializedObject.FindProperty("_translationMode");
-			_translationVector = serializedObject.FindProperty("_translationVector");
-			_translationSpeed = serializedObject.FindProperty("_translationSpeed");
-
-			_rotationMode = serializedObject.FindProperty("_rotationMode");
-			_rotationAxis = serializedObject.FindProperty("_rotationAxis");
-			_rotationSpeed = serializedObject.FindProperty("_rotationSpeed");
-
-			_useLocalCoordinate = serializedObject.FindProperty("_useLocalCoordinate");
+			translationMode = serializedObject.FindProperty("_translationMode");
+			translationVector = serializedObject.FindProperty("_translationVector");
+			translationSpeed = serializedObject.FindProperty("_translationSpeed");
+			rotationMode = serializedObject.FindProperty("_rotationMode");
+			rotationAxis = serializedObject.FindProperty("_rotationAxis");
+			rotationSpeed = serializedObject.FindProperty("_rotationSpeed");
+			useLocalCoordinate = serializedObject.FindProperty("_useLocalCoordinate");
 		}
 
 		public override void OnInspectorGUI()
 		{
 			serializedObject.Update();
-			EditorGUILayout.PropertyField(_translationMode, _textTranslation);
+			EditorGUILayout.PropertyField(translationMode, textTranslation);
 			EditorGUI.indentLevel++;
 
-			if (_translationMode.hasMultipleDifferentValues || _translationMode.enumValueIndex == (int)ConstantMotion.TranslationMode.Vector)
+			if (translationMode.hasMultipleDifferentValues || translationMode.enumValueIndex == (int)ConstantMotion.TranslationMode.Vector)
 			{
-				EditorGUILayout.PropertyField(_translationVector, _textVector);
+				EditorGUILayout.PropertyField(translationVector, textVector);
 			}
 
-			if (_translationMode.hasMultipleDifferentValues || _translationMode.enumValueIndex != 0)
+			if (translationMode.hasMultipleDifferentValues || translationMode.enumValueIndex != 0)
 			{
-				EditorGUILayout.PropertyField(_translationSpeed, _textSpeed);
+				EditorGUILayout.PropertyField(translationSpeed, textSpeed);
 			}
 
 			EditorGUI.indentLevel--;
-			EditorGUILayout.PropertyField(_rotationMode, _textRotation);
+			EditorGUILayout.PropertyField(rotationMode, textRotation);
 			EditorGUI.indentLevel++;
 
-			if (_rotationMode.hasMultipleDifferentValues || _rotationMode.enumValueIndex == (int)ConstantMotion.RotationMode.Vector)
+			if (rotationMode.hasMultipleDifferentValues || rotationMode.enumValueIndex == (int)ConstantMotion.RotationMode.Vector)
 			{
-				EditorGUILayout.PropertyField(_rotationAxis, _textVector);
+				EditorGUILayout.PropertyField(rotationAxis, textVector);
 			}
 
-			if (_rotationMode.hasMultipleDifferentValues || _rotationMode.enumValueIndex != 0)
+			if (rotationMode.hasMultipleDifferentValues || rotationMode.enumValueIndex != 0)
 			{
-				EditorGUILayout.PropertyField(_rotationSpeed, _textSpeed);
+				EditorGUILayout.PropertyField(rotationSpeed, textSpeed);
 			}
 
 			EditorGUI.indentLevel--;
-			EditorGUILayout.PropertyField(_useLocalCoordinate, _textLocalCoordinate);
+			EditorGUILayout.PropertyField(useLocalCoordinate, textLocalCoordinate);
 			serializedObject.ApplyModifiedProperties();
 		}
 	}

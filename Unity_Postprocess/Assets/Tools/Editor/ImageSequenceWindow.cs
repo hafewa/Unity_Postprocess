@@ -1,27 +1,27 @@
 
-using UnityEngine;
-using UnityEditor;
 using System.IO;
+using UnityEditor;
+using UnityEngine;
 
 namespace Klak.Tools
 {
 	public class ImageSequenceWindow : EditorWindow
 	{
 		// recorder settings
-		int _frameRate = 30;
-		int _superSampling = 1;
-		bool _autoRecord;
+		int frameRate = 30;
+		int superSampling = 1;
+		bool autoRecord;
 
 		// recorder state
-		bool _isRecording;
-		int _frameCount;
-		int _previousFrame;
+		bool isRecording;
+		int frameCount;
+		int previousFrame;
 
 
 		public void InitializeRecorder()
 		{
-			_isRecording = false;
-			if (_autoRecord)
+			isRecording = false;
+			if (autoRecord)
 			{
 				StartRecord();
 			}
@@ -29,29 +29,29 @@ namespace Klak.Tools
 
 		private void StartRecord()
 		{
-			_frameCount = -1;
-			_isRecording = true;
+			frameCount = -1;
+			isRecording = true;
 		}
 
 		private void EndRecord()
 		{
 			Time.captureFramerate = 0;
-			_isRecording = false;
+			isRecording = false;
 		}
 
 		private void StepRecorder()
 		{
-			if (_frameCount == 0)
+			if (frameCount == 0)
 			{
 				Directory.CreateDirectory("Capture");
-				Time.captureFramerate = _frameRate;
+				Time.captureFramerate = frameRate;
 			}
-			else if (_frameCount > 0)
+			else if (frameCount > 0)
 			{
-				var name = "Capture/frame" + _frameCount.ToString("0000") + ".png";
-				ScreenCapture.CaptureScreenshot(name, _superSampling);
+				var name = "Capture/frame" + frameCount.ToString("0000") + ".png";
+				ScreenCapture.CaptureScreenshot(name, superSampling);
 			}
-			_frameCount++;
+			frameCount++;
 		}
 
 
@@ -86,15 +86,15 @@ namespace Klak.Tools
 
 		private void OnGUI()
 		{
-			_frameRate = EditorGUILayout.IntSlider("Frame Rate", _frameRate, 1, 120);
-			_superSampling = EditorGUILayout.IntSlider("Supersampling", _superSampling, 1, 4);
-			_autoRecord = EditorGUILayout.Toggle("Auto Recording", _autoRecord);
+			frameRate = EditorGUILayout.IntSlider("Frame Rate", frameRate, 1, 120);
+			superSampling = EditorGUILayout.IntSlider("Supersampling", superSampling, 1, 4);
+			autoRecord = EditorGUILayout.Toggle("Auto Recording", autoRecord);
 
 			if (EditorApplication.isPlaying)
 			{
 				var fatButton = GUILayout.Height(30);
 
-				if (!_isRecording)
+				if (!isRecording)
 				{
 					if (GUILayout.Button("REC", fatButton))
 					{
@@ -103,7 +103,7 @@ namespace Klak.Tools
 				}
 				else
 				{
-					var time = (float)_frameCount / _frameRate;
+					var time = (float)frameCount / frameRate;
 					var label = "STOP  (" + time.ToString("0.0") + "s)";
 					if (GUILayout.Button(label, fatButton))
 					{
@@ -116,14 +116,14 @@ namespace Klak.Tools
 		private void Update()
 		{
 			var frame = Time.frameCount;
-			if (_previousFrame != frame)
+			if (previousFrame != frame)
 			{
-				if (Application.isPlaying && _isRecording)
+				if (Application.isPlaying && isRecording)
 				{
 					StepRecorder();
 					Repaint();
 				}
-				_previousFrame = frame;
+				previousFrame = frame;
 			}
 		}
 

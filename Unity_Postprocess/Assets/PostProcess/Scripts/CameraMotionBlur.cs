@@ -7,8 +7,6 @@ namespace PostProcess
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
 	public sealed class CameraMotionBlur : PostProcessBase
 	{
-		static float MAX_RADIUS = 100.0f;
-
 		public enum MotionBlurFilter
 		{
 			CameraMotion = 0,
@@ -39,7 +37,7 @@ namespace PostProcess
 		[SerializeField]
 		private float rotationScale = 1.0f;
 
-		[SerializeField]
+		[SerializeField][Range(0.0f, 0.1f)]
 		private float softZDistance = 0.005f;
 
 		[Header("品質調整、値が大きいほど、ぼかし効果はよくなるが、FPSに影響する。")]
@@ -99,11 +97,6 @@ namespace PostProcess
 		{
 			base.OnDisable();
 
-			if (material != null)
-			{
-				DestroyImmediate(material);
-				material = null;
-			}
 			if (dx11Material != null)
 			{
 				DestroyImmediate(dx11Material);
@@ -200,7 +193,12 @@ namespace PostProcess
 
 		private void NoiseTextureFilterMode()
 		{
-			if (noiseTexture)
+			if (noiseTexture == null)
+			{
+				return;
+			}
+
+			if (noiseTexture.filterMode != FilterMode.Point)
 			{
 				noiseTexture.filterMode = FilterMode.Point;
 			}
@@ -258,16 +256,13 @@ namespace PostProcess
 			// get temp textures
 			RenderTexture velocityBuffer = RenderTexture.GetTemporary(
 				RoundUp(source.width, velocityDownsample), 
-				RoundUp(source.height, velocityDownsample), 
-				0, rtFormat);
+				RoundUp(source.height, velocityDownsample), 0, rtFormat);
 
-			int tileWidth = 1;
-			int tileHeight = 1;
 			maxVelocity = Mathf.Max(2.0f, maxVelocity);
 
 			float _maxVelocity = maxVelocity;
-			tileWidth = RoundUp(velocityBuffer.width, (int)maxVelocity);
-			tileHeight = RoundUp(velocityBuffer.height, (int)maxVelocity);
+			int tileWidth = RoundUp(velocityBuffer.width, (int)maxVelocity);
+			int tileHeight = RoundUp(velocityBuffer.height, (int)maxVelocity);
 			_maxVelocity = velocityBuffer.width / tileWidth;
 
 			RenderTexture tileMax = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, rtFormat);
@@ -294,8 +289,8 @@ namespace PostProcess
 
 			// matrices
 			Matrix4x4 invViewPrj = Matrix4x4.Inverse(currentViewProjMat);
-			material.SetMatrix("_InvViewProj", invViewPrj);
-			material.SetMatrix("_PrevViewProj", prevViewProjMat);
+			//material.SetMatrix("_InvViewProj", invViewPrj);
+			//material.SetMatrix("_PrevViewProj", prevViewProjMat);
 			material.SetMatrix("_ToPrevViewProjCombined", prevViewProjMat * invViewPrj);
 
 			material.SetFloat("_MaxVelocity", _maxVelocity);
@@ -309,7 +304,7 @@ namespace PostProcess
 			material.SetTexture("_VelTex", velocityBuffer);
 			material.SetTexture("_NeighbourMaxTex", neighbourMax);
 			material.SetTexture("_TileTexDebug", tileMax);
-
+			material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
 
 			if (filterType == MotionBlurFilter.CameraMotion)
 			{
@@ -347,7 +342,6 @@ namespace PostProcess
 
 				case MotionBlurFilter.Reconstruction:
 				{
-					material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
 					// TileMax
 					Graphics.Blit(velocityBuffer, tileMax, material, 1);
 					// NeighbourMax
@@ -359,6 +353,7 @@ namespace PostProcess
 
 				case MotionBlurFilter.ReconstructionDX11:
 				{
+					// dx11 Shader Apply
 					dx11Material.SetFloat("_MinVelocity", minVelocity);
 					dx11Material.SetFloat("_VelocityScale", velocityScale);
 					dx11Material.SetFloat("_Jitter", jitter);
@@ -375,7 +370,6 @@ namespace PostProcess
 
 				case MotionBlurFilter.ReconstructionDisc:
 				{
-					material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
 					// TileMax
 					Graphics.Blit(velocityBuffer, tileMax, material, 1);
 					// NeighbourMax
