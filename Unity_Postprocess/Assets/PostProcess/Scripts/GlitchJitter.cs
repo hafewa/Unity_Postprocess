@@ -9,28 +9,34 @@ namespace PostProcess
 	{
 		public enum Direction
 		{
-			Horizontal  = 0,
-			Vertical    = 1,
-			Both		= 2,
+			Horizontal = 0,
+			Vertical   = 1,
+			Both       = 2,
 		}
 
+		[Header("Noise, RGBSplit Speed")]
 		[Range(0f, 1f)]
 		public float speed = default;
 
 		[Range(0f, 50f)]
 		public float frequency = 5f;
 
+		[Header("ImageEffect RGB Split Params")]
 		[Range(0f, 50f)]
 		public float rgbSplit = 20f;
 
+		[Header("UV NoiseStrength")]
 		[Range(0f, 2f)]
 		public float amount = 1f;
 
+		[Header("Horizontal, Vertical Blend")]
 		[Range(0f, 1f)]
 		public float blend = 0.5f;
 
-		public Vector2 resolution = new Vector2(640f, 480f);
-		public bool customResolution = false;
+		[Header("ScreenSize Resolution")]
+		[Range(0f, 6)]
+		public int resolution = 1;
+
 		public bool randomFrequency = false;
 		public bool frequencyLoop = false;
 		public Direction direction = Direction.Horizontal;
@@ -83,8 +89,8 @@ namespace PostProcess
 			material.SetFloat("_Frequency", randomFrequency ? Random.Range(0, frequency) : frequency);
 			material.SetVector("_Resolution", 
 				new Vector4(
-					customResolution ? resolution.x : Screen.width, 
-					customResolution ? resolution.y : Screen.height,
+					(float)Screen.width / resolution,
+					(float)Screen.height / resolution,
 					1f, 
 					1f));
 		}
