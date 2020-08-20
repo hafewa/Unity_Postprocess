@@ -75,9 +75,9 @@ namespace PostProcess
 				RenderTexture.ReleaseTemporary(blurbuffer);
 			}
 
-
+			blurAmount = Mathf.Clamp(blurAmount, 0.0f, 0.92f);
 			material.SetTexture("_MainTex", accumTexture);
-			material.SetFloat("_AccumOrig", 1.0f - Mathf.Clamp(blurAmount, 0.0f, 0.92f));
+			material.SetFloat("_AccumOrig", 1.0f - blurAmount);
 
 			// restoreˆ—‚ğs‚¤
 			accumTexture.MarkRestoreExpected();

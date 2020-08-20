@@ -7,30 +7,71 @@ namespace PostProcess
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
 	public sealed class ChromaDepth : PostProcessBase
 	{
-		[SerializeField][Range(0.0f, 100.0f)]
-		private float waveSpeed = 2.0f;
+		static readonly int SCANNER_WS_ID = Shader.PropertyToID("_ScannerWS");
+		static readonly int CAMERA_WS_ID = Shader.PropertyToID("_CameraWS");
+		static readonly int NOISE_TEX_ID = Shader.PropertyToID("_DetailTex");
+		static readonly int SCANNER_DST_ID = Shader.PropertyToID("_ScanDistance");
+		static readonly int SCANNER_WTH_ID = Shader.PropertyToID("_ScanWidth");
+		static readonly int SCANNER_SHARP_ID = Shader.PropertyToID("_LeadSharp");
+		static readonly int LEAD_COLOR_ID = Shader.PropertyToID("_LeadColor");
+		static readonly int MID_COLOR_ID = Shader.PropertyToID("_MidColor");
+		static readonly int TRAIL_COLOR_ID = Shader.PropertyToID("_TrailColor");
+		static readonly int HBAR_COLOR_ID = Shader.PropertyToID("_HBarColor");
 
-		[SerializeField][Range(0.0f, 100.0f)]
-		private float waveTrail = 2.0f;
+		public Transform scanOrigin = default;
+
+		public float scanWidth = 10.0f;
+		public float sharpness = 10.0f;
+
+		public Color edgeColor = Color.white;
+		public Color midColor = new Color(0.18f, 0.33f, 0.0f, 0.0f);
+		public Color trailColor = new Color(0f, 1f, 0.94f, 0.0f);
+		public Color horizontalBarColor = new Color(0f, 1f, 0.04f, 0.0f);
+
+		public Texture2D noiseTex = default;
+		public bool scanTexture = default;
+
+		[Header("Sample")]
+		[SerializeField]
+		private bool scanning = false;
 
 		[SerializeField]
-		private Color waveColor = new Color(0, 0, 0, 0);
+		private float speed = 50.0f;
 
-		[SerializeField]
-		private Texture2D noiseTexture = default;
-
-		[SerializeField]
-		private float noiseScale = default;
-
+		private float scanDistance = default;
 		private new Camera camera;
 
-		private void Start()
+		private void OnEnable()
 		{
-			if (camera == null)
-			{
-				camera = GetComponent<Camera>();
-			}
+			camera = GetComponent<Camera>();
 			camera.depthTextureMode |= DepthTextureMode.Depth;
+		}
+
+		protected override void OnDisable()
+		{
+			base.OnDisable();
+			camera.depthTextureMode = DepthTextureMode.None;
+		}
+
+		private void Update()
+		{
+			if (scanning)
+			{
+				scanDistance += Time.deltaTime * speed;
+			}
+
+			if (Input.GetMouseButtonDown(0))
+			{
+				Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+				RaycastHit hit;
+
+				if (Physics.Raycast(ray, out hit))
+				{
+					scanning = true;
+					scanDistance = 0;
+					scanOrigin.position = hit.point;
+				}
+			}
 		}
 
 		/// <summary>
@@ -46,67 +87,108 @@ namespace PostProcess
 				material.hideFlags = HideFlags.HideAndDontSave;
 			}
 
-			if (material == null)
+			if (material == null || scanOrigin == null)
 			{
 				Graphics.Blit(source, destination);
 				return;
 			}
 
-			material.SetMatrix("_FrustumCornersWS", GetFrustumCorners());
-			material.SetVector("_CameraWorldSpase", camera.transform.position);
-			material.SetFloat("_WaveSpeed", waveSpeed);
-			material.SetFloat("_WaveTrail", waveTrail);
-			material.SetFloat("_NoiseScale", noiseScale);
-			material.SetColor("_WaveColor", waveColor);
-			material.SetTexture("_NoiseTex", noiseTexture);
-			Graphics.Blit(source, destination, material);
+			SetKeyword();
+			material.SetVector(SCANNER_WS_ID, scanOrigin.position);
+			material.SetVector(CAMERA_WS_ID, camera.transform.position);
+			material.SetTexture(NOISE_TEX_ID, noiseTex);
+			material.SetFloat(SCANNER_DST_ID, scanDistance);
+			material.SetFloat(SCANNER_WTH_ID, scanWidth);
+			material.SetFloat(SCANNER_SHARP_ID, sharpness);
+
+			material.SetColor(LEAD_COLOR_ID, edgeColor);
+			material.SetColor(MID_COLOR_ID, midColor);
+			material.SetColor(TRAIL_COLOR_ID, trailColor);
+			material.SetColor(HBAR_COLOR_ID, horizontalBarColor);
+
+			RaycastCornerBlit(source, destination, material);
 		}
 
-
-		/// brief Stores the normalized rays representing the camera frustum in a 4x4 matrix.  Each row is a vector.
-		/// The following rays are stored in each row (in eyespace, not worldspace):
-		/// Top Left corner:     row=0
-		/// Top Right corner:    row=1
-		/// Bottom Right corner: row=2
-		/// Bottom Left corner:  row=3
-		private Matrix4x4 GetFrustumCorners()
+		/// <summary>
+		/// Update keyword
+		/// </summary>
+		private void SetKeyword()
 		{
-			Transform cameraTransform = camera.transform;
-			Matrix4x4 frustumCorners = Matrix4x4.identity;
-			float near = camera.nearClipPlane;
-			float far = camera.farClipPlane;
-			float fov = camera.fieldOfView;
-			float cameraAspect = camera.aspect;
+			if (scanTexture)
+			{
+				material.DisableKeyword("NOISE_OFF");
+				material.EnableKeyword("NOISE_ON");
 
-			float fovWHalf = fov * 0.5f;
-			Vector3 toRight = cameraTransform.right * near * Mathf.Tan(fovWHalf * Mathf.Deg2Rad) * cameraAspect;
-			Vector3 toTop = cameraTransform.up * near * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
-			Vector3 topLeft = (cameraTransform.forward * near - toRight + toTop);
-			float camScale = topLeft.magnitude * far / near;
+			}
+			else
+			{
+				material.DisableKeyword("NOISE_ON");
+				material.EnableKeyword("NOISE_OFF");
+			}
+		}
+
+		/// <summary>
+		/// Custom Blit
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="dest"></param>
+		/// <param name="mat"></param>
+		private void RaycastCornerBlit(RenderTexture source, RenderTexture destination, Material mat)
+		{
+			// Compute Frustum Corners
+			float camFar = camera.farClipPlane;
+			float camFov = camera.fieldOfView;
+			float camAspect = camera.aspect;
+
+			float fovWHalf = camFov * 0.5f;
+
+			Vector3 toRight = camera.transform.right * Mathf.Tan(fovWHalf * Mathf.Deg2Rad) * camAspect;
+			Vector3 toTop = camera.transform.up * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
+			Vector3 topLeft = (camera.transform.forward - toRight + toTop);
+			float camScale = topLeft.magnitude * camFar;
+
 			topLeft.Normalize();
 			topLeft *= camScale;
 
-			Vector3 topRight = (cameraTransform.forward * near + toRight + toTop);
+			Vector3 topRight = (camera.transform.forward + toRight + toTop);
 			topRight.Normalize();
 			topRight *= camScale;
 
-			Vector3 bottomRight = (cameraTransform.forward * near + toRight - toTop);
+			Vector3 bottomRight = (camera.transform.forward + toRight - toTop);
 			bottomRight.Normalize();
 			bottomRight *= camScale;
 
-			Vector3 bottomLeft = (cameraTransform.forward * near - toRight - toTop);
+			Vector3 bottomLeft = (camera.transform.forward - toRight - toTop);
 			bottomLeft.Normalize();
 			bottomLeft *= camScale;
 
-			frustumCorners.SetRow(0, topLeft);
-			frustumCorners.SetRow(1, topRight);
-			frustumCorners.SetRow(2, bottomRight);
-			frustumCorners.SetRow(3, bottomLeft);
-			return frustumCorners;
+			// Custom Blit, encoding Frustum Corners as additional Texture Coordinates
+			RenderTexture.active = destination;
+			mat.SetTexture("_MainTex", source);
+			GL.PushMatrix();
+			GL.LoadOrtho();
+			mat.SetPass(0);
+			GL.Begin(GL.QUADS);
 
+			GL.MultiTexCoord2(0, 0.0f, 0.0f);
+			GL.MultiTexCoord(1, bottomLeft);
+			GL.Vertex3(0.0f, 0.0f, 0.0f);
+
+			GL.MultiTexCoord2(0, 1.0f, 0.0f);
+			GL.MultiTexCoord(1, bottomRight);
+			GL.Vertex3(1.0f, 0.0f, 0.0f);
+
+			GL.MultiTexCoord2(0, 1.0f, 1.0f);
+			GL.MultiTexCoord(1, topRight);
+			GL.Vertex3(1.0f, 1.0f, 0.0f);
+
+			GL.MultiTexCoord2(0, 0.0f, 1.0f);
+			GL.MultiTexCoord(1, topLeft);
+			GL.Vertex3(0.0f, 1.0f, 0.0f);
+
+			GL.End();
+			GL.PopMatrix();
 		}
-
-
 	}
 
 }
