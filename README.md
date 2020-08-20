@@ -12,6 +12,7 @@
 - Fast Approximate Anti-aliasing (FXAA) 
 - GaussianBlur
 - Glare
+- Glitch
 - GodRay
 - MotionBlur
 - RadialBlur

@@ -60,7 +60,7 @@
 		{
 			o.uv.y = 1 - o.uv.y;
 		}
-#endif				
+#endif
 		o.interpolatedRay = v.ray;
 		return o;
 	}
@@ -94,7 +94,7 @@
 			// Fraction
 			scannerCol += HorizontalBars(i.uv) * _HBarColor;
 #endif
-					scannerCol *= diff;
+			scannerCol *= diff;
 		}
 		return color + scannerCol;
 	}
