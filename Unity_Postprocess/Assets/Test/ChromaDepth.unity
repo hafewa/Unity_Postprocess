@@ -829,6 +829,7 @@ GameObject:
   - component: {fileID: 1603570674}
   - component: {fileID: 1603570668}
   - component: {fileID: 1603570669}
+  - component: {fileID: 1603570670}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -875,6 +876,27 @@ MonoBehaviour:
   blockSize: 8
   maxRGBSplitX: 8
   maxRGBSplitY: 8
+--- !u!114 &1603570670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603570667}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 176b6dff37ec03d46993847b9ec40149, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0.213
+  frequency: 23.4
+  rgbSplit: 20
+  amount: 0.4
+  resolution: {x: 640, y: 480}
+  customResolution: 0
+  randomFrequency: 0
+  frequencyLoop: 0
+  direction: 0
 --- !u!20 &1603570672
 Camera:
   m_ObjectHideFlags: 0

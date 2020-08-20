@@ -13,6 +13,7 @@
 - GaussianBlur
 - Glare
 - Glitch
+- GlitchJitter
 - GodRay
 - MotionBlur
 - RadialBlur

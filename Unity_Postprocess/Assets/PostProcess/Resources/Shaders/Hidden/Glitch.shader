@@ -12,6 +12,7 @@
 		Pass
 		{
 			CGPROGRAM
+			#pragma target 3.0
 			#pragma vertex VSMain
 			#pragma fragment PSMain
 			#include "UnityCG.cginc"
