@@ -6,6 +6,7 @@
 - Bloom
 - Blur
 - CameraMotionBlur
+- ChromaDepth
 - ChromaticAberration
 - Fog (Height, Distance)
 - Fast Approximate Anti-aliasing (FXAA) 

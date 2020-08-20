@@ -8,17 +8,18 @@
 		_RangeScale("Range Scale", Range(0.01, 10)) = 1
 		_Center("Center", Vector) = (0.0, -1.0, 3.0, 1.0)
 	}
-		SubShader
+
+	SubShader
 	{
 		Tags { "RenderType" = "Opaque" }
 		LOD 100
 
 		Pass
 		{
-			ZWrite Off
-			AlphaTest Greater 0
-			ColorMask RGB
-			Blend SrcAlpha OneMinusSrcAlpha
+			//ZWrite Off
+			//AlphaTest Greater 0
+			//ColorMask RGB
+			//Blend SrcAlpha OneMinusSrcAlpha
 
 			CGPROGRAM
 			#pragma vertex VSMain
@@ -63,9 +64,14 @@
 			{
 				float a = (radians(60.0));
 				float zoom = 0.125;
-				float2 c = (pos.xy + float2(0.0, pos.z)) * float2(sin(a), 1.0) / _TrianglesScale;//scaled coordinates
-				c = ((c + float2(c.y, 0.0)*cos(a)) / zoom) + float2(floor((c.x - c.y*cos(a)) / zoom * 4.0) / 4.0, 0.0);//Add rotations
-				float type = (r(floor(c*4.0))*0.2 + r(floor(c*2.0))*0.3 + r(floor(c))*0.5);//Randomize type
+				//scaled coordinates
+				float2 c = (pos.xy + float2(0.0, pos.z)) * float2(sin(a), 1.0) / _TrianglesScale;
+
+				//Add rotations
+				c = ((c + float2(c.y, 0.0)*cos(a)) / zoom) + float2(floor((c.x - c.y*cos(a)) / zoom * 4.0) / 4.0, 0.0);
+
+				//Randomize type
+				float type = (r(floor(c*4.0))*0.2 + r(floor(c*2.0))*0.3 + r(floor(c))*0.5);
 				type += 0.3 * sin(_Time.y*5.0*type);
 
 				float l = min(min((1.0 - (2.0 * abs(frac((c.x - c.y)*4.0) - 0.5))),
@@ -81,8 +87,11 @@
 			{
 				float a = (radians(60.0));
 				float zoom = 0.5;
-				float2 c = (pos.xy + float2(0.0, pos.z)) * float2(sin(a), 1.0) / _TrianglesScale;//scaled coordinates
-				c = ((c + float2(c.y, 0.0)*cos(a)) / zoom) + float2(floor((c.x - c.y*cos(a)) / zoom * 4.0) / 4.0, 0.0);//Add rotations
+				//scaled coordinates
+				float2 c = (pos.xy + float2(0.0, pos.z)) * float2(sin(a), 1.0) / _TrianglesScale;
+
+				//Add rotations
+				c = ((c + float2(c.y, 0.0)*cos(a)) / zoom) + float2(floor((c.x - c.y*cos(a)) / zoom * 4.0) / 4.0, 0.0);
 
 				float l = min(min((1.0 - (2.0 * abs(frac((c.x - c.y)*4.0) - 0.5))),
 				(1.0 - (2.0 * abs(frac(c.y * 4.0) - 0.5)))),
@@ -94,7 +103,6 @@
 
 			//---------------------------------------------------------------
 			// Material 
-			//
 			// Defines the material (colors, shading, pattern, texturing) of the model
 			// at every point based on its position and normal. In this case, it simply
 			// returns a constant yellow color.
