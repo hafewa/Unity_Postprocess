@@ -11,6 +11,7 @@ namespace PostProcess
 		{
 			Horizontal  = 0,
 			Vertical    = 1,
+			Both		= 2,
 		}
 
 		[Range(0f, 1f)]
@@ -24,6 +25,9 @@ namespace PostProcess
 
 		[Range(0f, 2f)]
 		public float amount = 1f;
+
+		[Range(0f, 1f)]
+		public float blend = 0.5f;
 
 		public Vector2 resolution = new Vector2(640f, 480f);
 		public bool customResolution = false;
@@ -52,16 +56,7 @@ namespace PostProcess
 
 			SetKeyword();
 			SetMaterialProperty();
-
-			switch(direction)
-			{
-				case Direction.Horizontal:
-				Graphics.Blit(source, destination, material, 0);
-				break;
-				case Direction.Vertical:
-				Graphics.Blit(source, destination, material, 1);
-				break;
-			}
+			Graphics.Blit(source, destination, material, (int)direction);
 		}
 
 
@@ -84,6 +79,7 @@ namespace PostProcess
 			material.SetFloat("_Speed", speed);
 			material.SetFloat("_RGBSplit", rgbSplit);
 			material.SetFloat("_Amount", amount);
+			material.SetFloat("_Blend", blend);
 			material.SetFloat("_Frequency", randomFrequency ? Random.Range(0, frequency) : frequency);
 			material.SetVector("_Resolution", 
 				new Vector4(

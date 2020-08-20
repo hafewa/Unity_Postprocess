@@ -641,9 +641,10 @@ MonoBehaviour:
   frequency: 5
   rgbSplit: 20
   amount: 1
+  blend: 0.654
   resolution: {x: 640, y: 480}
   customResolution: 0
-  randomFrequency: 0
+  randomFrequency: 1
   frequencyLoop: 0
   direction: 0
 --- !u!1 &1938101560
