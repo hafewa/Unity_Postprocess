@@ -1,16 +1,19 @@
 /*
-	CAMERA MOTION BLUR IMAGE EFFECTS
 	Reconstruction Filter:
 	Based on "Plausible Motion Blur"
 	http://graphics.cs.williams.edu/papers/MotionBlurI3D12/
+	http://casual-effects.com/research/McGuire2012Blur/McGuire12Blur.pdf
 	CameraMotion:
 	Based on Alex Vlacho's technique in
-	http://www.valvesoftware.com/publications/2008/GDC2008_PostProcessingInTheOrangeBox.pdf
+
 	SimpleBlur:
 	Straightforward sampling along velocities
 	ScatterFromGather:
 	Combines Reconstruction with depth of field type defocus
 */
+
+// ImageEffectÇ≈è„â∫îΩì]Ç∑ÇÈèÍçáÇÃëŒçÙ
+// UNITY_UV_STARTS_AT_TOP
 
 Shader "Hidden/PostProcess/CameraMotionBlur" 
 {
@@ -29,23 +32,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	#define NUM_SAMPLES (11)
 	#define MOTION_SAMPLES (16)
 
-	static const int SmallDiscKernelSamples = 12;
-	static const float2 SmallDiscKernel[SmallDiscKernelSamples] =
-	{
-		float2(-0.326212,-0.40581),
-		float2(-0.840144,-0.07358),
-		float2(-0.695914,0.457137),
-		float2(-0.203345,0.620716),
-		float2(0.96234,-0.194983),
-		float2(0.473434,-0.480026),
-		float2(0.519456,0.767022),
-		float2(0.185461,-0.893124),
-		float2(0.507431,0.064425),
-		float2(0.89642,0.412458),
-		float2(-0.32194,-0.932615),
-		float2(-0.791559,-0.59771)
-	};
-
 	sampler2D _TileTexDebug;
 	float4 _BlurDirectionPacked;
 
@@ -54,7 +40,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	{
 		float2 depth_uv = i.uv;
 
-// ImageEffectÇ≈è„â∫îΩì]Ç∑ÇÈèÍçáÇÃëŒçÙ
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 		{
@@ -64,11 +49,8 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 
 		float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, depth_uv);
 		float3 clipPos = float3((i.uv.x) * 2.0 - 1.0, (i.uv.y) * 2.0 - 1.0, depth);
-
-		// only 1 matrix mul:
 		float4 prevClipPos = mul(_ToPrevViewProjCombined, float4(clipPos, 1.0));
 		prevClipPos.xyz /= prevClipPos.w;
-
 		float2 velocity = _MainTex_TexelSize.zw * _VelocityScale * (clipPos.xy - prevClipPos.xy) / 2.f;
 		float velocityLength = length(velocity);
 		float2 velocityOut = velocity * max(0.5, min(velocityLength, _MaxVelocity)) / (velocityLength + 1e-2f);
@@ -77,6 +59,9 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	}
 
 	// pass 1
+	// @NOTE
+	// BlurÇÃç≈ëÂîºåaÇ…ëäìñÇ∑ÇÈëÂÇ´Ç≥ÇíPà Ç∆ÇµÇƒTileÇçÏê¨ÇµÅAÇªÇÍÇºÇÍÇÃTileì‡Ç≈ÅAVelocityÇ™ç≈ëÂÇÃVectorÇï€ë∂ÅB
+	// è]Ç¡ÇƒÅATile MaxÉoÉbÉtÉ@ÇÃâëúìxÇÕÅA(w / k, h / k)Ç∆Ç»ÇÈÅB
 	half4 TileMax(v2f i) : SV_Target
 	{
 		float2 uvCorner = i.uv - _MainTex_TexelSize.xy * (_MaxRadiusOrKInPaper * 0.5);
@@ -86,7 +71,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 
 		for (int l = 0; l < (int)_MaxRadiusOrKInPaper; l++)
 		{
-			for (int k = 0; k < (int)_MaxRadiusOrKInPaper; k++)
+			for (int k = 0; k < (int)_MaxRadiusOrKInPaper; ++k)
 			{
 				maxvel = VectorMax(maxvel, tex2Dlod(_MainTex, baseUv + float4(l,k,0,0) * uvScale).xy);
 			}
@@ -95,6 +80,8 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	}
 
 	// pass 2
+	// @NOTE
+	// é©êgÇÃTileÇ∆ó◊ê⁄Ç∑ÇÈé¸ï”8Ç¬ÇÃTileÇÃíÜÇ≈ÅAVelocityÇ™ç≈ëÂÇÃVectorÇï€ë∂
 	half4 NeighbourMax(v2f i) : SV_Target
 	{
 		float2 x_ = i.uv;
@@ -107,7 +94,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(-1.0, 1.0)  * _MainTex_TexelSize.xy, _MainTex)).xy);
 		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(-1.0, 0.0)  * _MainTex_TexelSize.xy, _MainTex)).xy);
 		nx = VectorMax(nx, tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(-1.0, -1.0) * _MainTex_TexelSize.xy, _MainTex)).xy);
-
 		return float4(nx, 0, 0);
 	}
 
@@ -117,7 +103,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		float2 x = i.uv;
 		float2 xf = x;
 
-// ImageEffectÇ≈è„â∫îΩì]Ç∑ÇÈèÍçáÇÃëŒçÙ
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 		{
@@ -126,22 +111,19 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 #endif
 
 		float2 x2 = xf;
-
 		// largest velocity in neighbourhood
 		float2 vn = tex2Dlod(_NeighbourMaxTex, float4(x2,0,0)).xy;
 
 		// color at x
 		float4 cx = tex2Dlod(_MainTex, float4(x,0,0));
-
+		
 		// velocity at x 
 		float2 vx = tex2Dlod(_VelTex, float4(xf,0,0)).xy;
 
 		float zx = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(x,0,0));
 		zx = -Linear01Depth(zx);
-
 		// random offset [-0.5, 0.5]
 		float j = (tex2Dlod(_NoiseTex, float4(i.uv,0,0) * 11.0f).r * 2 - 1) * _Jitter;
-
 		// sample current pixel
 		float weight = 0.75; // <= good start weight choice
 		float4 sum = cx * weight;
@@ -165,11 +147,9 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 #endif
 
 			float t = lerp(-1.0, 1.0, (l + j) / (-1 + _Jitter + (float)NUM_SAMPLES));
-
 			float2 y = x + vn * t;
 
 			float2 yf = y;
-// ImageEffectÇ≈è„â∫îΩì]Ç∑ÇÈèÍçáÇÃëŒçÙ
 #if UNITY_UV_STARTS_AT_TOP
 			if (_MainTex_TexelSize.y < 0)
 			{
@@ -199,14 +179,12 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		float2 x = i.uv;
 		float2 xf = x;
 
-// ImageEffectÇ≈è„â∫îΩì]Ç∑ÇÈèÍçáÇÃëŒçÙ
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 		{
 			xf.y = 1 - xf.y;
 		}
 #endif
-
 		// velocity at x
 		float2 vx = tex2D(_VelTex, TRANSFORM_TEX(xf, _VelTex)).xy;
 		float4 sum = float4(0, 0, 0, 0);
@@ -228,7 +206,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	half4 MotionVectorBlur(v2f i) : SV_Target
 	{
 		float2 x = i.uv;
-		float2 insideVector = (x * 2 - 1) * float2(1,_MainTex_TexelSize.w / _MainTex_TexelSize.z);
+		float2 insideVector = (x * 2 - 1) * float2(1, _MainTex_TexelSize.w / _MainTex_TexelSize.z);
 		float2 rollVector = float2(insideVector.y, -insideVector.x);
 
 		float2 blurDir = _BlurDirectionPacked.x * float2(0,1);
@@ -266,7 +244,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		float2 xf = i.uv;
 		float2 x = i.uv;
 
-// ImageEffectÇ≈è„â∫îΩì]Ç∑ÇÈèÍçáÇÃëŒçÙ
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 		{
@@ -288,11 +265,11 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		float4 sum = cx * weight;
 		float4 jitteredDir = vn.xyxy + noise.xyyz;
 
+		half jitterV = 0.15f;
 #ifdef SHADER_API_D3D11
-		jitteredDir = max(abs(jitteredDir.xyxy), _MainTex_TexelSize.xyxy * _MaxVelocity * 0.5) * sign(jitteredDir.xyxy)  * float4(1,1,-1,-1);
-#else
-		jitteredDir = max(abs(jitteredDir.xyxy), _MainTex_TexelSize.xyxy * _MaxVelocity * 0.15) * sign(jitteredDir.xyxy)  * float4(1,1,-1,-1);
+		jitterV = 0.5f;
 #endif
+		jitteredDir = max(abs(jitteredDir.xyxy), _MainTex_TexelSize.xyxy * _MaxVelocity * jitterV) * sign(jitteredDir.xyxy) * float4(1, 1, -1, -1);
 
 		[unroll]
 		for (int l = 0; l < SmallDiscKernelSamples; l++)
@@ -300,7 +277,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			float4 y = i.uv.xyxy + jitteredDir.xyxy * SmallDiscKernel[l].xyxy * float4(1,1,-1,-1);
 			float4 yf = y;
 
-// ImageEffectÇ≈è„â∫îΩì]Ç∑ÇÈèÍçáÇÃëŒçÙ
 #if UNITY_UV_STARTS_AT_TOP
 			if (_MainTex_TexelSize.y < 0)
 			{
@@ -310,7 +286,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 
 			// velocity at y 
 			float2 vy = tex2Dlod(_VelTex, float4(yf.xy,0,0)).xy;
-
 			float zy = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(y.xy,0,0));
 			zy = -Linear01Depth(zy);
 
@@ -325,11 +300,9 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 			vy = tex2Dlod(_VelTex, float4(yf.zw,0,0)).xy;
 			zy = SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(y.zw,0,0));
 			zy = -Linear01Depth(zy);
-
 			f = SoftDepthCompare(zx, zy);
 			b = SoftDepthCompare(zy, zx);
 			alphay = b * Cone(x, y.zw, vx) + f * Cone(y.zw, x, vy) + Cylinder(y.zw, x, vy) * Cylinder(x, y.zw, vx) * 2.0;
-
 			cy = tex2Dlod(_MainTex, float4(y.zw,0,0));
 			sum += cy * alphay;
 			weight += alphay;
@@ -337,8 +310,8 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		}
 		return sum / weight;
 	}
-
 	ENDCG
+
 
 	SubShader 
 	{

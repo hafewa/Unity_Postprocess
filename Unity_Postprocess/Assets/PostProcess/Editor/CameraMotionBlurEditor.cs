@@ -55,11 +55,11 @@ namespace PostProcess
 			{
 				// CameraMotion
 				case 0:
-				EditorGUILayout.HelpBox("カメラモーションに対してのみ機能。カメラの変更に基づいてfilterの方向を生成し、\nその方向に沿って画面をぼかす", MessageType.Info);
+				EditorGUILayout.HelpBox("カメラモーションに対してのみ機能。ぼかしは画面全体で均一", MessageType.Info);
 				break;
 				// LocalBlur
 				case 1:
-				EditorGUILayout.HelpBox("現在のピクセルに沿ってぼかす", MessageType.Info);
+				EditorGUILayout.HelpBox("現在のピクセルに沿って方向をぼかす。", MessageType.Info);
 				break;
 				// Reconstruction
 				case 2:
@@ -76,8 +76,8 @@ namespace PostProcess
 			}
 
 			EditorGUILayout.PropertyField(velocityScale, new GUIContent("Velocity Scale"));
-			EditorGUILayout.PropertyField(maxVelocity, new GUIContent("Velocity Max"));
-			EditorGUILayout.PropertyField(minVelocity, new GUIContent("Velocity Min"));
+			EditorGUILayout.PropertyField(maxVelocity, new GUIContent("Max Velocity"));
+			EditorGUILayout.PropertyField(minVelocity, new GUIContent("Min Velocity"));
 			EditorGUILayout.PropertyField(softZDistance, new GUIContent("Z Distance"));
 
 			EditorGUILayout.Separator();
@@ -85,15 +85,15 @@ namespace PostProcess
 			if (filterType.enumValueIndex == 0)
 			{
 				// portal style motion blur
-				EditorGUILayout.PropertyField(rotationScale, new GUIContent("Camera Rotation"));
-				EditorGUILayout.PropertyField(movementScale, new GUIContent("Camera Movement"));
+				EditorGUILayout.PropertyField(rotationScale, new GUIContent("Rotation Scale"));
+				EditorGUILayout.PropertyField(movementScale, new GUIContent("Movement Scale"));
 			}
 			else
 			{
-				// "plausible" blur or cheap, local blur
 				EditorGUILayout.PropertyField(excludeLayers, new GUIContent("Exclude Layers"));
 				EditorGUILayout.PropertyField(velocityDownsample, new GUIContent("Velocity Downsample"));
 				velocityDownsample.intValue = velocityDownsample.intValue < 1 ? 1 : velocityDownsample.intValue;
+
 				if (filterType.enumValueIndex >= 2)
 				{
 					EditorGUILayout.PropertyField(noiseTexture, new GUIContent("Sample Jitter"));

@@ -3,6 +3,17 @@
 
 #define NOISE_SIMPLEX_1_DIV_289 0.00346020761245674740484429065744f
 
+
+float RandomNoise(float2 seed, float speed)
+{
+	return frac(sin(dot(seed * floor(_Time.y * speed), float2(17.13, 3.71))) * 43758.5453123);
+}
+
+float RandomNoise(float seed, float speed)
+{
+	return RandomNoise(float2(seed, 1.0), speed);
+}
+
 float mod289(float x)
 {
 	return x - floor(x * NOISE_SIMPLEX_1_DIV_289) * 289.0;

@@ -14,31 +14,36 @@ namespace PostProcess
 			Both       = 2,
 		}
 
-		[Header("Noise, RGBSplit Speed")]
-		[Range(0f, 1f)]
-		public float speed = default;
+		[Header("UV NoiseStrength")]
+		[Range(0f, 2f)]
+		public float amount = 1f;
 
 		[Range(0f, 50f)]
 		public float frequency = 5f;
+
+		[Header("Noise RGBSplit Speed")]
+		[Range(0f, 1f)]
+		public float speed = default;
 
 		[Header("ImageEffect RGB Split Params")]
 		[Range(0f, 50f)]
 		public float rgbSplit = 20f;
 
-		[Header("UV NoiseStrength")]
-		[Range(0f, 2f)]
-		public float amount = 1f;
-
-		[Header("Horizontal, Vertical Blend")]
+		[Header("Horizontal Vertical Blend(Only MixDirection)")]
 		[Range(0f, 1f)]
 		public float blend = 0.5f;
 
 		[Header("ScreenSize Resolution")]
-		[Range(0f, 6)]
+		[Range(1, 6)]
 		public int resolution = 1;
 
+		[Header("If Checked Random FrequencyValue")]
 		public bool randomFrequency = false;
+
+		[Header("If Checked Frequency Multiply DeltaTimes")]
 		public bool frequencyLoop = false;
+
+		[Header("Glitch Direction")]
 		public Direction direction = Direction.Horizontal;
 
 		/// <summary>

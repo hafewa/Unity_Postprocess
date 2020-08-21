@@ -79,10 +79,7 @@ namespace PostProcess
 
 		private void OnEnable()
 		{
-			if (camera == null)
-			{
-				camera = GetComponent<Camera>();
-			}
+			camera = GetComponent<Camera>();
 			camera.depthTextureMode |= DepthTextureMode.Depth;
 			replacementClear = Shader.Find("Hidden/PostProcess/MotionBlurClear");
 
@@ -304,14 +301,14 @@ namespace PostProcess
 			material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
 
 			// dx11 Shader Apply
-			dx11Material.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
-			dx11Material.SetFloat("_MinVelocity", minVelocity);
-			dx11Material.SetFloat("_VelocityScale", velocityScale);
-			dx11Material.SetFloat("_Jitter", jitter);
-			dx11Material.SetTexture("_NoiseTex", noiseTexture);
-			dx11Material.SetTexture("_VelTex", velocityBuffer);
-			dx11Material.SetTexture("_NeighbourMaxTex", neighbourBuffer);
-			dx11Material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
+			dx11Material?.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
+			dx11Material?.SetFloat("_MinVelocity", minVelocity);
+			dx11Material?.SetFloat("_VelocityScale", velocityScale);
+			dx11Material?.SetFloat("_Jitter", jitter);
+			dx11Material?.SetTexture("_NoiseTex", noiseTexture);
+			dx11Material?.SetTexture("_VelTex", velocityBuffer);
+			dx11Material?.SetTexture("_NeighbourMaxTex", neighbourBuffer);
+			dx11Material?.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
 
 			if (filterType == MotionBlurFilter.CameraMotion)
 			{
@@ -361,13 +358,11 @@ namespace PostProcess
 				case MotionBlurFilter.ReconstructionDX11:
 				{
 					// TileMax
-					Graphics.Blit(velocityBuffer, tileBuffer, dx11Material, 0);
-
+					Graphics.Blit(velocityBuffer, tileBuffer, dx11Material ? dx11Material : material, dx11Material ? 0 : 1);
 					// NeighbourMax
-					Graphics.Blit(tileBuffer, neighbourBuffer, dx11Material, 1);
-
+					Graphics.Blit(tileBuffer, neighbourBuffer, dx11Material ? dx11Material : material, dx11Material ? 1 : 2);
 					// ReconstructFilterBlur
-					Graphics.Blit(source, destination, dx11Material, 2);
+					Graphics.Blit(source, destination, dx11Material ? dx11Material : material, dx11Material ? 2 : 3);
 				}
 				break;
 

@@ -4,5 +4,17 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Test/Scenes/PlanarReflection.unity
+    guid: bf0946d091ca59b4295b3dfec7bc7ce2
+  - enabled: 1
+    path: Assets/Test/Scenes/CameraMotionBlur.unity
+    guid: d33e9fc8d7e0b42c0a76e4fb47997577
+  - enabled: 1
+    path: Assets/Test/Scenes/ChromaDepth.unity
+    guid: 76da2d11ff109504cb888f3c8dd577f7
+  - enabled: 1
+    path: Assets/Test/Scenes/Example.unity
+    guid: 3207bb7d4bd3b164a8345bbf700f6a76
   m_configObjects: {}

@@ -1,14 +1,25 @@
 #ifndef CAMERAMOTIONBLURUTIL_INCLUDED
 #define CAMERAMOTIONBLURUTIL_INCLUDED
 
+static const int SmallDiscKernelSamples = 12;
+static const float2 SmallDiscKernel[SmallDiscKernelSamples] = {
+	float2(-0.326212,-0.40581),
+	float2(-0.840144,-0.07358),
+	float2(-0.695914,0.457137),
+	float2(-0.203345,0.620716),
+	float2(0.96234,-0.194983),
+	float2(0.473434,-0.480026),
+	float2(0.519456,0.767022),
+	float2(0.185461,-0.893124),
+	float2(0.507431,0.064425),
+	float2(0.89642,0.412458),
+	float2(-0.32194,-0.932615),
+	float2(-0.791559,-0.59771)
+};
+
+
 float _SoftZDistance;
 float _MaxRadiusOrKInPaper;
-
-// inverse view-projection matrix
-float4x4 _InvViewProj;
-
-// previous view-projection matrix
-float4x4 _PrevViewProj;
 
 // combined
 float4x4 _ToPrevViewProjCombined;
