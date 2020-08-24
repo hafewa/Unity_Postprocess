@@ -4,28 +4,25 @@ using UnityEngine;
 
 namespace PostProcess
 {
-	[RequireComponent(typeof(MeshRenderer))]
-	public class FresnelReflection : MonoBehaviour
+	public sealed class FresnelReflection : MonoBehaviour
 	{
 		static readonly int REFLECTION_TEX_ID = Shader.PropertyToID("_ReflectionTex");
 		static readonly string REFLECT_ENABLE = "_REFLECT_ENABLE";
 		static readonly string REFLECT_DISABLE = "_REFLECT_DISABLE";
 
-		private RenderTexture reflectionTexture;
-		private GameObject reflectionCameraObject;
-		private Camera reflectionCamera;
+		private RenderTexture reflectionTexture = default;
+		private GameObject reflectionCameraObject = default;
+		private Camera reflectionCamera = default;
+		private float minNearClip = default;
 
 		[SerializeField]
-		private Camera targetCamera;
+		private Camera targetCamera = default;
 
 		[SerializeField]
 		private int resolution = 512;
 
 		[SerializeField]
 		private bool enableRefrect = false;
-		private float minNearClip = default;
-		private MeshRenderer meshRenderer = default;
-
 
 
 		private void Start()
@@ -36,12 +33,6 @@ namespace PostProcess
 			}
 
 			FindCamera();
-			meshRenderer = GetComponent<MeshRenderer>();
-
-			if (meshRenderer == null)
-			{
-				return;
-			}
 
 			SetMaterialKeyWord(true);
 			reflectionTexture = new RenderTexture(resolution, resolution, 16, RenderTextureFormat.ARGB32);
@@ -125,13 +116,8 @@ namespace PostProcess
 
 		private void SetMaterialKeyWord(bool enable)
 		{
-			if (meshRenderer == null)
-			{
-				return;
-			}
-			var material = meshRenderer.sharedMaterial;
-			material?.EnableKeyword(enable ? REFLECT_ENABLE : REFLECT_DISABLE);
-			material?.DisableKeyword(enable ? REFLECT_DISABLE : REFLECT_ENABLE);
+			Shader.EnableKeyword(enable ? REFLECT_ENABLE : REFLECT_DISABLE);
+			Shader.DisableKeyword(enable ? REFLECT_DISABLE : REFLECT_ENABLE);
 		}
 
 		private Matrix4x4 CalcReflectionMatrix(Vector4 n)

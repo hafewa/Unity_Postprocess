@@ -10,8 +10,11 @@
 #include "AutoLight.cginc"
 
 sampler2D _MainTex; float4 _MainTex_ST;
+sampler2D _SubTex; float4 _SubTex_ST;
 sampler2D _ReflectionTex; float4 _ReflectionTex_ST;
-float _Flesnel;
+fixed4 _Color;
+fixed4 _EnvironmentColor;
+half _Flesnel, _Glossiness, _Metallic, _BlendWeight;
 
 
 struct VSInput
@@ -43,11 +46,15 @@ VSOutput VSMain(VSInput v)
 fixed4 PSMain(VSOutput i) : SV_Target
 {
 	fixed4 baseColor = tex2D(_MainTex, i.uv);
+
+#ifdef _REFLECT_ENABLE
 	fixed4 col = tex2Dproj(_ReflectionTex, UNITY_PROJ_COORD(i.projCoord));
 	col.a = saturate(_Flesnel + (1 - _Flesnel) * pow(1 - i.vdotn, 5));
-
 	col *= baseColor;
 	return col;
+#elif _REFLECT_DISABLE
+	return baseColor;
+#endif
 }
 
 
