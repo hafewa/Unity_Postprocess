@@ -46,10 +46,10 @@ namespace Motion.Tools
             CheckInstance();
         }
 
-
         public virtual void Initialize()
         {
-            //
+            Application.targetFrameRate = 60;
+            QualitySettings.vSyncCount = 0;
         }
 
         protected bool CheckInstance()

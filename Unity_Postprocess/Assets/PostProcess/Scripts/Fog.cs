@@ -56,18 +56,31 @@ namespace PostProcess
 
 		[SerializeField]
 		private Texture2D noiseTexture = default;
-
-
 		private readonly Vector3[] frustumCorners = new Vector3[4];
 
 
-		private void Start()
-		{
+        private void OnEnable()
+        {
 			if (camera == null)
 			{
 				camera = GetComponent<Camera>();
 			}
 			camera.depthTextureMode |= DepthTextureMode.Depth;
+
+			if (material == null)
+			{
+				material = new Material(Shader.Find("Hidden/PostProcess/Fog"));
+			}
+			material.hideFlags = HideFlags.HideAndDontSave;
+		}
+
+		private bool CheckResources()
+		{
+			if (camera == null || material == null)
+			{
+				return false;
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -77,13 +90,7 @@ namespace PostProcess
 		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
-			if (material == null)
-			{
-				material = new Material(Shader.Find("Hidden/PostProcess/Fog"));
-				material.hideFlags = HideFlags.HideAndDontSave;
-			}
-
-			if (material == null || camera == null)
+			if (!CheckResources())
 			{
 				Graphics.Blit(source, destination);
 				return;

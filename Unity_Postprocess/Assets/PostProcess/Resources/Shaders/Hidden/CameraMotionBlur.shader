@@ -12,8 +12,6 @@
 	Combines Reconstruction with depth of field type defocus
 */
 
-// ImageEffectで上下反転する場合の対策
-// UNITY_UV_STARTS_AT_TOP
 
 Shader "Hidden/PostProcess/CameraMotionBlur" 
 {
@@ -35,7 +33,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	sampler2D _TileTexDebug;
 	float4 _BlurDirectionPacked;
 
-	// pass 0
 	half4 CameraVelocity(v2f i) : SV_Target
 	{
 		float2 depth_uv = i.uv;
@@ -58,10 +55,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return float4(velocityOut, 0.0, 0.0);
 	}
 
-	// pass 1
-	// @NOTE
-	// Blurの最大半径に相当する大きさを単位としてTileを作成し、それぞれのTile内で、Velocityが最大のVectorを保存。
-	// 従って、Tile Maxバッファの解像度は、(w / k, h / k)となる。
 	half4 TileMax(v2f i) : SV_Target
 	{
 		float2 uvCorner = i.uv - _MainTex_TexelSize.xy * (_MaxRadiusOrKInPaper * 0.5);
@@ -79,9 +72,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return float4(maxvel, 0, 1);
 	}
 
-	// pass 2
-	// @NOTE
-	// 自身のTileと隣接する周辺8つのTileの中で、Velocityが最大のVectorを保存
 	half4 NeighbourMax(v2f i) : SV_Target
 	{
 		float2 x_ = i.uv;
@@ -97,7 +87,6 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return float4(nx, 0, 0);
 	}
 
-	// pass 3
 	half4 ReconstructFilterBlur(v2f i) : SV_Target
 	{
 		float2 x = i.uv;

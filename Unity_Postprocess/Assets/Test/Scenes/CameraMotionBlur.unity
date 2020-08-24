@@ -617,8 +617,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   filterType: 0
-  velocityScale: 5
-  maxVelocity: 20
+  velocityScale: 4
+  maxVelocity: 12
   minVelocity: 0.1
   movementScale: 0
   rotationScale: 1.6

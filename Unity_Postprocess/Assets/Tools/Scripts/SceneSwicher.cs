@@ -16,6 +16,9 @@ namespace Motion.Tools
             "Example",
         };
 
+        static readonly float REFRESH_INTERVAL_SECS = 1f;
+
+
         [SerializeField]
         private Button sceneButton = default;
         private int index = 0;
@@ -23,22 +26,16 @@ namespace Motion.Tools
         [SerializeField]
         private Text fpsText = default;
 
-        private const float REFRESH_INTERVAL_SECS = 1f;
-
         private float refreshSecs;
         private float delta;
 
 
-        void Start()
+        private void Start()
         {
             sceneButton?.onClick.AddListener(OnNext);
-#if !UNITY_EDITOR
-            Application.targetFrameRate = 60;
-            QualitySettings.vSyncCount = 0;
-#endif
         }
 
-        void Update()
+        private void Update()
         {
             if (fpsText == null)
             {
@@ -54,8 +51,7 @@ namespace Motion.Tools
             }
         }
 
-
-        public void OnNext()
+        private void OnNext()
         {
             if (index >= scenes.Count - 1)
             {

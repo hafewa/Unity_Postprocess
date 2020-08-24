@@ -11,14 +11,18 @@ Shader "Hidden/PostProcess/Fog"
 	#include "UnityCG.cginc"
 	#define SKYBOX_THREASHOLD_VALUE 0.999999
 
-	sampler2D _MainTex;
-	sampler2D _NoiseTex;
-	sampler2D _CameraDepthTexture;
+	sampler2D _MainTex; sampler2D _NoiseTex; sampler2D _CameraDepthTexture;
+
+
 	// x = fog height
 	// y = FdotC (CameraY-FogHeight)
 	// z = k (FdotC > 0.0)
 	// w = a/2
 	float4 _HeightParams;
+	#define _FogHeight _HeightParams.x
+	#define _FdotC _HeightParams.y
+	#define _FogNear _HeightParams.z
+	#define _FogDensity _HeightParams.w
 
 	// x = start distance
 	// y = end distance
@@ -29,10 +33,15 @@ Shader "Hidden/PostProcess/Fog"
 	float4x4 _FrustumCornersWS;
 	float4 _MainTex_TexelSize;
 	float4 _CameraWorldSpase;
-
 	float4 _FogColor;
 	float2 _ScrollSpeed;
-	float _FogNoiseScale;
+	half _FogNoiseScale;
+
+	struct VSInput
+	{
+		float4 vertex : POSITION;
+		float2 uv : TEXCOORD0;
+	};
 
 	struct VSOutput
 	{
@@ -59,13 +68,13 @@ Shader "Hidden/PostProcess/Fog"
 	float ComputeHalfSpace(float3 wsDir)
 	{
 		float3 wpos = _CameraWorldSpase + wsDir;
-		float FH = _HeightParams.x;
+		float FH = _FogHeight;
 		float3 C = _CameraWorldSpase;
 		float3 V = wsDir;
 		float3 P = wpos;
-		float3 aV = _HeightParams.w * V;
-		float FdotC = _HeightParams.y;
-		float k = _HeightParams.z;
+		float3 aV = _FogDensity * V;
+		float FdotC = _FdotC;
+		float k = _FogNear;
 		float FdotP = P.y - FH;
 		float FdotV = wsDir.y;
 		float c1 = k * (FdotP + FdotC);
@@ -75,14 +84,14 @@ Shader "Hidden/PostProcess/Fog"
 		return g;
 	}
 
-	VSOutput VSMain(appdata_img v)
+	VSOutput VSMain(VSInput v)
 	{
 		VSOutput o;
 		half index = v.vertex.z;
 		v.vertex.z = 0.1;
 		o.pos = UnityObjectToClipPos(v.vertex);
-		o.uv = v.texcoord.xy;
-		o.uv_depth = v.texcoord.xy;
+		o.uv = v.uv.xy;
+		o.uv_depth = v.uv.xy;
 
 #if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)

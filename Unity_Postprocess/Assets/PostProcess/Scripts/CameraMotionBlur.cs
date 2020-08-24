@@ -17,7 +17,7 @@ namespace PostProcess
 		}
 
 		[SerializeField]
-		private MotionBlurFilter filterType = MotionBlurFilter.Reconstruction;
+		private MotionBlurFilter filterType = MotionBlurFilter.CameraMotion;
 
 		[SerializeField]
 		private float velocityScale = 0.8f;
