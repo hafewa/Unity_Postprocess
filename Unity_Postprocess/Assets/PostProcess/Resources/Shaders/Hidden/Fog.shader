@@ -23,6 +23,8 @@ Shader "Hidden/PostProcess/Fog"
 	// x = start distance
 	// y = end distance
 	float4 _DistanceParams;
+	#define _StartDistance _DistanceParams.x
+	#define _EndDistance _DistanceParams.y
 
 	float4x4 _FrustumCornersWS;
 	float4 _MainTex_TexelSize;
@@ -43,7 +45,7 @@ Shader "Hidden/PostProcess/Fog"
 	float ComputeFog(float z)
 	{
 		half fog = 0.0;
-		fog = (_DistanceParams.x - z) / (_DistanceParams.y - _DistanceParams.x);
+		fog = (_StartDistance - z) / (_EndDistance - _StartDistance);
 		return saturate(fog);
 	}
 

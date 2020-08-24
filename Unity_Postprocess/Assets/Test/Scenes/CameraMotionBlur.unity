@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1.5
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 31de36dd7a8fc804e9103ee64eb3a25c, type: 2}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -273,65 +273,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1000010522923978, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000011248584614, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000011302114702, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000011302114702, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000011663322168, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000011663322168, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000012279608928, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000012279608928, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1000012456873816, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
       propertyPath: m_Name
       value: Segment_1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000012456873816, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000013396203890, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000013579044540, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000013579044540, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000013704157876, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000014269479764, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000011061413918, guid: 3e6e70a098814914e8aa1c7dddc639a9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -556,10 +500,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1603570673}
   - component: {fileID: 1603570672}
-  - component: {fileID: 1603570668}
   - component: {fileID: 1603570674}
   - component: {fileID: 1603570675}
-  - component: {fileID: 1603570669}
   - component: {fileID: 1603570670}
   - component: {fileID: 1603570671}
   - component: {fileID: 1603570676}
@@ -571,43 +513,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1603570668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1603570667}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 543ddbe12367a4899b011d43ef41f357, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _enablePositionNoise: 1
-  _enableRotationNoise: 0
-  _positionFrequency: 0.2
-  _rotationFrequency: 0.2
-  _positionAmplitude: 0.5
-  _rotationAmplitude: 10
-  _positionScale: {x: 1, y: 1, z: 1}
-  _rotationScale: {x: 1, y: 1, z: 1}
-  _positionFractalLevel: 3
-  _rotationFractalLevel: 1
---- !u!114 &1603570669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1603570667}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 578fcced2af54fe41bdd16affb8d10e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  R: {x: 0, y: 0}
-  G: {x: 0, y: 0}
-  B: {x: 0.03, y: 0.13}
 --- !u!114 &1603570670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -620,11 +525,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09142e4e01e33dd448f01b038ad97d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: 0.9
-  threshold: 1.15
+  intensity: 0.86
+  threshold: 1.04
   softThreshold: 0.516
   resolution: 1
-  color: {r: 0.11320752, g: 0.08490564, b: 0.09919669, a: 1}
+  color: {r: 0.09433961, g: 0.08677464, b: 0.090016775, a: 1}
   iterations: 4
 --- !u!114 &1603570671
 MonoBehaviour:
@@ -651,8 +556,8 @@ Camera:
   m_GameObject: {fileID: 1603570667}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.17332682, g: 0.17562844, b: 0.1792453, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -711,12 +616,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ec222a4eb7e84df2a0a1c8c94cf1452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterType: 2
-  velocityScale: 3.2
-  maxVelocity: 12
+  filterType: 0
+  velocityScale: 5
+  maxVelocity: 20
   minVelocity: 0.1
   movementScale: 0
-  rotationScale: 1
+  rotationScale: 1.6
   softZDistance: 0.005
   velocityDownsample: 1
   excludeLayers:
@@ -892,6 +797,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Ethan
+      objectReference: {fileID: 0}
+    - target: {fileID: 8863455356985481629, guid: f57e919d50e2b99488f0ce5a052fbd7f,
+        type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8863455356985481629, guid: f57e919d50e2b99488f0ce5a052fbd7f,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8863455356985481631, guid: f57e919d50e2b99488f0ce5a052fbd7f,
+        type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8863455356985481631, guid: f57e919d50e2b99488f0ce5a052fbd7f,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f57e919d50e2b99488f0ce5a052fbd7f, type: 3}

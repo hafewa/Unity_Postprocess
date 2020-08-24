@@ -19,15 +19,12 @@ namespace PostProcess
 		[SerializeField]
 		private MotionBlurFilter filterType = MotionBlurFilter.Reconstruction;
 
-		[Header("Scaleが高いほど、画像がぼやけやすくなる")]
 		[SerializeField]
 		private float velocityScale = 0.8f;
 
-		[Header("最大ピクセル距離")]
 		[SerializeField][Range(0.0f, 100f)]
 		private float maxVelocity = 10.0f;
 
-		[Header("最小ピクセル距離")]
 		[SerializeField][Range(0.0f, 100f)]
 		private float minVelocity = 0.1f;
 
@@ -40,11 +37,9 @@ namespace PostProcess
 		[SerializeField][Range(0.0f, 0.1f)]
 		private float softZDistance = 0.005f;
 
-		[Header("品質調整、値が大きいほど、ぼかし効果はよくなるが、FPSに影響する。")]
 		[SerializeField]
 		private int velocityDownsample = 1;
 
-		[Header("除外したいLayer")]
 		[SerializeField]
 		private LayerMask excludeLayers = 0;
 
@@ -83,11 +78,13 @@ namespace PostProcess
 			camera.depthTextureMode |= DepthTextureMode.Depth;
 			replacementClear = Shader.Find("Hidden/PostProcess/MotionBlurClear");
 
-			// Mobile用 MotionBlur
+			// Mobile MotionBlur
 			material = new Material(Shader.Find("Hidden/PostProcess/CameraMotionBlur"));
 
-			// Console用 MotionBlur
+#if !UNITY_ANDROID || !UNITY_IOS
+			// Console MotionBlur
 			dx11Material = new Material(Shader.Find("Hidden/PostProcess/CameraMotionBlurDX11"));
+#endif
 		}
 
 		protected override void OnDisable()
@@ -117,8 +114,12 @@ namespace PostProcess
 		{
 			if (camera == null ||
 				material == null ||
-				replacementClear == null ||
-				dx11Material == null)
+				replacementClear == null
+#if !UNITY_ANDROID || !UNITY_IOS
+				|| dx11Material == null)
+#else
+				)
+#endif
 			{
 				return false;
 			}
@@ -300,6 +301,8 @@ namespace PostProcess
 			material.SetTexture("_TileTexDebug", tileBuffer);
 			material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
 
+
+#if !UNITY_ANDROID || !UNITY_IOS
 			// dx11 Shader Apply
 			dx11Material?.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
 			dx11Material?.SetFloat("_MinVelocity", minVelocity);
@@ -309,7 +312,7 @@ namespace PostProcess
 			dx11Material?.SetTexture("_VelTex", velocityBuffer);
 			dx11Material?.SetTexture("_NeighbourMaxTex", neighbourBuffer);
 			dx11Material?.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
-
+#endif
 			if (filterType == MotionBlurFilter.CameraMotion)
 			{
 				BlurVector(source.width);
