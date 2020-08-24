@@ -60,17 +60,39 @@ namespace PostProcess
 				scanDistance += Time.deltaTime * speed;
 			}
 
-			if (Input.GetMouseButtonDown(0))
+			if (Application.isEditor)
 			{
-				Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-				RaycastHit hit;
-
-				if (Physics.Raycast(ray, out hit))
+				if (Input.GetMouseButtonDown(0))
 				{
-					scanning = true;
-					scanDistance = 0;
-					scanOrigin.position = hit.point;
+					SetScreenPoint();
 				}
+			}
+			else
+			{
+				if (Input.touchCount > 0)
+                {
+					Touch touch = Input.GetTouch(0);
+
+					if (touch.phase == TouchPhase.Began)
+					{
+						SetScreenPoint();
+					}
+				}
+			}
+
+		}
+
+
+		private void SetScreenPoint()
+		{
+			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+
+			if (Physics.Raycast(ray, out hit))
+			{
+				scanning = true;
+				scanDistance = 0;
+				scanOrigin.position = hit.point;
 			}
 		}
 
@@ -114,17 +136,8 @@ namespace PostProcess
 		/// </summary>
 		private void SetKeyword()
 		{
-			if (scanTexture)
-			{
-				material.DisableKeyword("NOISE_OFF");
-				material.EnableKeyword("NOISE_ON");
-
-			}
-			else
-			{
-				material.DisableKeyword("NOISE_ON");
-				material.EnableKeyword("NOISE_OFF");
-			}
+			material.DisableKeyword(scanTexture ? "NOISE_OFF" : "NOISE_ON");
+			material.EnableKeyword(scanTexture ? "NOISE_ON" : "NOISE_OFF");
 		}
 
 		/// <summary>

@@ -908,7 +908,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8863455356981872915}
   - component: {fileID: 8863455356989663067}
-  - component: {fileID: 5060253739411942993}
+  - component: {fileID: 6110812299104654441}
   m_Layer: 0
   m_Name: Ethan
   m_TagString: Untagged
@@ -952,7 +952,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &5060253739411942993
+--- !u!114 &6110812299104654441
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -966,13 +966,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enablePositionNoise: 1
   _enableRotationNoise: 1
-  _positionFrequency: 0.6
-  _rotationFrequency: 0.4
-  _positionAmplitude: 1
-  _rotationAmplitude: 9
-  _positionScale: {x: 0, y: 0, z: 1}
-  _rotationScale: {x: 1, y: 1, z: 1}
-  _positionFractalLevel: 1
+  _positionFrequency: 0.2
+  _rotationFrequency: 0.2
+  _positionAmplitude: 0.5
+  _rotationAmplitude: 10
+  _positionScale: {x: 1, y: 1, z: 1}
+  _rotationScale: {x: 1, y: 1, z: 0}
+  _positionFractalLevel: 3
   _rotationFractalLevel: 3
 --- !u!1 &8863455356982367605
 GameObject:

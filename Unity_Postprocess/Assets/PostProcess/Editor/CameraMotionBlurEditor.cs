@@ -55,15 +55,15 @@ namespace PostProcess
 			{
 				// CameraMotion
 				case 0:
-				EditorGUILayout.HelpBox("カメラモーションに対してのみ機能。ぼかしは画面全体で均一", MessageType.Info);
+				EditorGUILayout.HelpBox("Only works for camera motion. Blur is uniform on the entire screen", MessageType.Info);
 				break;
 				// LocalBlur
 				case 1:
-				EditorGUILayout.HelpBox("現在のピクセルに沿って方向をぼかす。", MessageType.Info);
+				EditorGUILayout.HelpBox("Blur the direction along the current pixel.", MessageType.Info);
 				break;
 				// Reconstruction
 				case 2:
-				EditorGUILayout.HelpBox("よりリアルなぼかし結果を生成", MessageType.Info);
+				EditorGUILayout.HelpBox("Generates more realistic blur results", MessageType.Info);
 				break;
 				// ReconstructionDX11
 				case 3:
@@ -71,7 +71,7 @@ namespace PostProcess
 				break;
 				// ReconstructionDisc
 				case 4:
-				EditorGUILayout.HelpBox("Reconstructionよりソフトな外観を生成する為に、\n異なるSamplingPatternを使用", MessageType.Info);
+				EditorGUILayout.HelpBox("Use different Sampling Patterns to generate a softer look than Reconstruction", MessageType.Info);
 				break;
 			}
 

@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 466957703}
   - component: {fileID: 466957702}
   - component: {fileID: 466957701}
+  - component: {fileID: 466957705}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -279,7 +280,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: 3
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -304,6 +305,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 15, y: 0, z: 0}
+--- !u!114 &466957705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466957700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e04746e976184b038c6f5a99323222b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &736088075
 GameObject:
   m_ObjectHideFlags: 0
@@ -402,10 +415,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6110812299104654441, guid: f57e919d50e2b99488f0ce5a052fbd7f,
+        type: 3}
+      propertyPath: _enablePositionNoise
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8863455356981872915, guid: f57e919d50e2b99488f0ce5a052fbd7f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.349
+      value: -2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8863455356981872915, guid: f57e919d50e2b99488f0ce5a052fbd7f,
         type: 3}
@@ -477,8 +495,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ethan (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5060253739411942993, guid: f57e919d50e2b99488f0ce5a052fbd7f, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f57e919d50e2b99488f0ce5a052fbd7f, type: 3}
 --- !u!1001 &854611439
 PrefabInstance:
@@ -487,10 +504,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6110812299104654441, guid: f57e919d50e2b99488f0ce5a052fbd7f,
+        type: 3}
+      propertyPath: _enablePositionNoise
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8863455356981872915, guid: f57e919d50e2b99488f0ce5a052fbd7f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.532
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8863455356981872915, guid: f57e919d50e2b99488f0ce5a052fbd7f,
         type: 3}
@@ -563,7 +585,7 @@ PrefabInstance:
       value: Ethan
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 5060253739411942993, guid: f57e919d50e2b99488f0ce5a052fbd7f, type: 3}
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: f57e919d50e2b99488f0ce5a052fbd7f, type: 3}
 --- !u!1 &1040266381
 GameObject:
@@ -614,6 +636,7 @@ GameObject:
   - component: {fileID: 1061216146}
   - component: {fileID: 1061216145}
   - component: {fileID: 1061216144}
+  - component: {fileID: 1061216148}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -628,7 +651,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061216143}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3f30ae689ef012419185bba2058de65, type: 3}
   m_Name: 
@@ -664,7 +687,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 49d5f94cc2afd4d45a9c74cb9778fa11, type: 2}
+  - {fileID: 2100000, guid: 1b410f9f0f58549cc80f7b382f732c8a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -707,6 +730,21 @@ Transform:
   m_Father: {fileID: 1040266382}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1061216148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061216143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2382e953e594e73b6a9ce62ddc7901, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCamera: {fileID: 0}
+  resolution: 512
+  enableRefrect: 1
 --- !u!1 &1264455903
 GameObject:
   m_ObjectHideFlags: 0

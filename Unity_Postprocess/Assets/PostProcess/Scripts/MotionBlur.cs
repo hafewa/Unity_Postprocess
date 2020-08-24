@@ -5,11 +5,9 @@ namespace PostProcess
 	[ExecuteInEditMode, ImageEffectAllowedInSceneView, RequireComponent(typeof(Camera))]
 	public sealed class MotionBlur : PostProcessBase
 	{
-		[Header("ぼかしの閾値")]
 		[SerializeField]
 		private float blurAmount = 0.6f;
 
-		[Header("余分なぼかしを行うか")]
 		[SerializeField]
 		private bool extraBlur = false;
 
@@ -68,7 +66,7 @@ namespace PostProcess
 			if (extraBlur)
 			{
 				RenderTexture blurbuffer = RenderTexture.GetTemporary(source.width / resolution, source.height / resolution, 0);
-				// restore処理を行う
+				// restore???????s??
 				accumTexture.MarkRestoreExpected();
 				Graphics.Blit(accumTexture, blurbuffer);
 				Graphics.Blit(blurbuffer, accumTexture);
@@ -79,7 +77,7 @@ namespace PostProcess
 			material.SetTexture("_MainTex", accumTexture);
 			material.SetFloat("_AccumOrig", 1.0f - blurAmount);
 
-			// restore処理を行う
+			// restore???????s??
 			accumTexture.MarkRestoreExpected();
 			Graphics.Blit(source, accumTexture, material);
 			Graphics.Blit(accumTexture, destination);
