@@ -9,9 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: EthanGrey
   m_Shader: {fileID: 45, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _EMISSION _LIGHTMAPPING_STATIC_LIGHTMAPS _NORMALMAP _UVPRIM_UV1
-    _UVSEC_UV1
-  m_LightmapFlags: 1
+  m_ShaderKeywords: _LIGHTMAPPING_STATIC_LIGHTMAPS _NORMALMAP _UVPRIM_UV1 _UVSEC_UV1
+  m_LightmapFlags: 6
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -45,7 +44,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 0ca09a4614a0daa44ba043de90181896, type: 3}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Occlusion:
@@ -78,8 +81,9 @@ Material:
     - _Glossiness: 0.4
     - _GlossyReflections: 1
     - _Lightmapping: 0
+    - _Metallic: 0
     - _Mode: 0
-    - _OcclusionStrength: 1
+    - _OcclusionStrength: 0
     - _Parallax: 0.02
     - _Shininess: 0.41313845
     - _SmoothnessTextureChannel: 0

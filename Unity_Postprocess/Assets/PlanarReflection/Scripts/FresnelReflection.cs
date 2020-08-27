@@ -7,16 +7,12 @@ namespace PostProcess
 	public sealed class FresnelReflection : MonoBehaviour
 	{
 		static readonly int REFLECTION_TEX_ID = Shader.PropertyToID("_ReflectionTex");
-		static readonly string REFLECT_ENABLE = "_REFLECT_ENABLE";
-		static readonly string REFLECT_DISABLE = "_REFLECT_DISABLE";
 
-		private RenderTexture reflectionTexture = default;
+		private RenderTexture renderBuffer = default;
 		private GameObject reflectionCameraObject = default;
 		private Camera reflectionCamera = default;
-		private float minNearClip = default;
-
-		[SerializeField]
 		private Camera targetCamera = default;
+		private float minNearClip = default;
 
 		[SerializeField]
 		private int resolution = 512;
@@ -35,8 +31,9 @@ namespace PostProcess
 			FindCamera();
 
 			SetMaterialKeyWord(true);
-			reflectionTexture = new RenderTexture(resolution, resolution, 16, RenderTextureFormat.ARGB32);
-			reflectionTexture.Create();
+
+			renderBuffer = new RenderTexture(resolution, resolution, 16, RenderTextureFormat.ARGB32);
+			renderBuffer.Create();
 
 			reflectionCameraObject = new GameObject();
 			reflectionCameraObject.name = "ReflectionCamera";
@@ -44,18 +41,16 @@ namespace PostProcess
 			reflectionCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Mirror"));
 			minNearClip = reflectionCamera.nearClipPlane;
 			reflectionCameraObject.transform.SetParent(transform);
-			reflectionCamera.targetTexture = reflectionTexture;
-			Shader.SetGlobalTexture(REFLECTION_TEX_ID, reflectionTexture);
+			reflectionCamera.targetTexture = renderBuffer;
+			Shader.SetGlobalTexture(REFLECTION_TEX_ID, renderBuffer);
 		}
 
-		/// <summary>
-		/// cameraが設定されてない場合は
-		/// camera componentが有効なcomponentを取得する
-		/// </summary>
 		private void FindCamera()
 		{
 			foreach (Camera cam in FindObjectsOfType<Camera>())
 			{
+				// 1 : MainCameraか?
+				// 2 : MainCamera以外に有効なCameraがあるか?
 				if (Camera.main == cam && cam.enabled)
 				{
 					targetCamera = cam;
@@ -71,11 +66,11 @@ namespace PostProcess
 
 		private void OnDisable()
 		{
-			if (reflectionTexture)
+			if (renderBuffer)
 			{
-				reflectionTexture.Release();
-				DestroyImmediate(reflectionTexture);
-				reflectionTexture = null;
+				renderBuffer.Release();
+				DestroyImmediate(renderBuffer);
+				renderBuffer = null;
 			}
 
 			if (reflectionCameraObject)
@@ -116,8 +111,15 @@ namespace PostProcess
 
 		private void SetMaterialKeyWord(bool enable)
 		{
-			Shader.EnableKeyword(enable ? REFLECT_ENABLE : REFLECT_DISABLE);
-			Shader.DisableKeyword(enable ? REFLECT_DISABLE : REFLECT_ENABLE);
+			if (enable)
+			{
+				Shader.EnableKeyword("_REFLECT_ENABLE");
+			}
+			else
+			{
+				Shader.DisableKeyword("_REFLECT_ENABLE");
+			}
+
 		}
 
 		private Matrix4x4 CalcReflectionMatrix(Vector4 n)
@@ -148,27 +150,24 @@ namespace PostProcess
 		private void OnWillRenderObject()
 		{
 			Camera cam = Camera.current;
-			if (!cam || cam == reflectionCamera)
+			if (cam == null || reflectionCamera == null || cam == reflectionCamera)
 			{
 				return;
 			}
 
-			if (reflectionCamera)
+			bool bSuccess = false;
+			SetReflectionCamera(ref bSuccess);
+
+			if (bSuccess)
 			{
-				bool bSuccess = false;
-				SetReflectionCamera(ref bSuccess);
-
-				if (bSuccess)
-				{
-					reflectionCamera.enabled = true;
-					GL.invertCulling = true;
-					reflectionCamera.Render();
-					GL.invertCulling = false;
-
-					Shader.SetGlobalTexture(REFLECTION_TEX_ID, reflectionTexture);
-					reflectionCamera.enabled = false;
-				}
+				reflectionCamera.enabled = true;
+				GL.invertCulling = true;
+				reflectionCamera.Render();
+				GL.invertCulling = false;
+				Shader.SetGlobalTexture(REFLECTION_TEX_ID, renderBuffer);
+				reflectionCamera.enabled = false;
 			}
+
 		}
 
 	}
