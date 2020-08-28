@@ -19,33 +19,33 @@ half _Glossiness, _Metallic, _IndirectDiffRefl, _Roughness;
 
 struct Input
 {
-    float2 uv_MainTex;
+	float2 uv_MainTex;
 	float4 projCoord;
-    float4 color;
+	float4 color;
 };
 
 struct PSInput
 {
 	UNITY_POSITION(pos);
-    float2 uv : TEXCOORD0;
-    float3 worldPos : TEXCOORD1;
-    float4 lightMap : TEXCOORD2;
+	float2 uv : TEXCOORD0;
+	float3 worldPos : TEXCOORD1;
+	float4 lightMap : TEXCOORD2;
 	float4 projCoord : TEXCOORD3;
 	float3 viewDir : TEXCOORD4;
 	float3 lightDir : TEXCOORD5;
-    float3 worldNormal : NORMAL;
+	float3 worldNormal : NORMAL;
 #ifdef _VERTCOLOR_ENABLE
-    float4 color : COLOR;
+	float4 color : COLOR;
 #endif
-    UNITY_SHADOW_COORDS(6)
-    UNITY_FOG_COORDS(7)
+	UNITY_SHADOW_COORDS(6)
+	UNITY_FOG_COORDS(7)
 
 #ifndef LIGHTMAP_ON
-    #if UNITY_SHOULD_SAMPLE_SH
-        half3 sh : TEXCOORD8;
-    #endif
+	#if UNITY_SHOULD_SAMPLE_SH
+		half3 sh : TEXCOORD8;
+	#endif
 #endif
-    UNITY_VERTEX_INPUT_INSTANCE_ID
+	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 UNITY_INSTANCING_BUFFER_START(Props)
@@ -55,13 +55,13 @@ PSInput VSMain(appdata_full  v)
 {
 	PSInput o =(PSInput)0;
 	UNITY_INITIALIZE_OUTPUT(PSInput, o);
-    UNITY_SETUP_INSTANCE_ID(v);
-    UNITY_TRANSFER_INSTANCE_ID(v, o);
+	UNITY_SETUP_INSTANCE_ID(v);
+	UNITY_TRANSFER_INSTANCE_ID(v, o);
 
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 	float3 worldNormal = UnityObjectToWorldNormal(v.normal);
-    o.worldPos = worldPos;
-    o.worldNormal = worldNormal;
+	o.worldPos = worldPos;
+	o.worldNormal = worldNormal;
 	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
 	o.projCoord = ComputeScreenPos(o.pos);
@@ -69,7 +69,7 @@ PSInput VSMain(appdata_full  v)
 	o.lightDir = normalize(_WorldSpaceLightPos0.xyz);
 
 #ifdef _VERTCOLOR_ENABLE
-    o.color = v.color;
+	o.color = v.color;
 #endif
 
 #ifdef DYNAMICLIGHTMAP_ON
@@ -97,10 +97,10 @@ PSInput VSMain(appdata_full  v)
 
 void surf(Input IN, inout SurfaceOutputStandard o)
 {
-    fixed4 baseColor = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-    fixed4 blendColor = tex2D(_SubTex, IN.uv_MainTex);
-    o.Albedo = baseColor * (1 - _BlendWeight) + blendColor * _BlendWeight;
-    o.Albedo += IN.color.rgb;
+	fixed4 baseColor = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+	fixed4 blendColor = tex2D(_SubTex, IN.uv_MainTex);
+	o.Albedo = baseColor * (1 - _BlendWeight) + blendColor * _BlendWeight;
+	o.Albedo += IN.color.rgb;
 
 #ifdef _REFLECT_ENABLE
 	fixed4 col = tex2Dproj(_ReflectionTex, UNITY_PROJ_COORD(IN.projCoord));
@@ -111,10 +111,10 @@ void surf(Input IN, inout SurfaceOutputStandard o)
 	o.Albedo += IN.color.rgb;
 #endif
 
-    o.Albedo *= _EnvironmentColor;
-    o.Metallic = _Metallic;
-    o.Smoothness = _Glossiness;
-    o.Alpha = baseColor.a;
+	o.Albedo *= _EnvironmentColor;
+	o.Metallic = _Metallic;
+	o.Smoothness = _Glossiness;
+	o.Alpha = baseColor.a;
 }
 
 
