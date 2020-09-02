@@ -26,6 +26,12 @@ namespace PostProcess
 				return;
 			}
 
+			float rcpWidth = 1.0f / Screen.width;
+			float rcpHeight = 1.0f / Screen.height;
+
+			material.SetVector("_rcpFrame", new Vector4(rcpWidth, rcpHeight, 0, 0));
+			material.SetVector("_rcpFrameOpt", new Vector4(rcpWidth * 2, rcpHeight * 2, rcpWidth * 0.5f, rcpHeight * 0.5f));
+
 			Graphics.Blit(source, destination, material);
 		}
 	}
