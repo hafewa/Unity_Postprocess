@@ -37,21 +37,21 @@ float4 _VelTex_TexelSize;
 half _Jitter, _VelocityScale, _DisplayVelocityScale;
 half _MaxVelocity, _MinVelocity;
 
-struct appdata
+struct VSInput
 {
 	float4 vertex : POSITION;
     float2 uv : TEXCOORD0;
 };
 
-struct v2f
+struct PSInput
 {
 	float4 pos : SV_POSITION;
 	float2 uv  : TEXCOORD0;
 };
 
-v2f vert(appdata v)
+PSInput VSMain(VSInput v)
 {
-	v2f o;
+	PSInput o = (PSInput)0;
 	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = v.uv;
 	return o;

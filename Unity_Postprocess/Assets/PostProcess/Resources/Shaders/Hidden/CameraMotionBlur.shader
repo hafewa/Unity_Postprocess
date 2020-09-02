@@ -24,7 +24,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	}
 
 	CGINCLUDE
-
+	#pragma target 3.0
 	#include "UnityCG.cginc"
 	#include "CameraMotionBlurUtil.cginc"
 	#define NUM_SAMPLES (11)
@@ -33,7 +33,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 	sampler2D _TileTexDebug;
 	float4 _BlurDirectionPacked;
 
-	half4 CameraVelocity(v2f i) : SV_Target
+	half4 CameraVelocity(PSInput i) : SV_Target
 	{
 		float2 depth_uv = i.uv;
 
@@ -55,7 +55,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return float4(velocityOut, 0.0, 0.0);
 	}
 
-	half4 TileMax(v2f i) : SV_Target
+	half4 TileMax(PSInput i) : SV_Target
 	{
 		float2 uvCorner = i.uv - _MainTex_TexelSize.xy * (_MaxRadiusOrKInPaper * 0.5);
 		float2 maxvel = float2(0,0);
@@ -72,7 +72,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return float4(maxvel, 0, 1);
 	}
 
-	half4 NeighbourMax(v2f i) : SV_Target
+	half4 NeighbourMax(PSInput i) : SV_Target
 	{
 		float2 x_ = i.uv;
 		float2 nx = tex2D(_MainTex, TRANSFORM_TEX(x_ + float2(1.0, 1.0) * _MainTex_TexelSize.xy, _MainTex)).xy;
@@ -87,7 +87,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return float4(nx, 0, 0);
 	}
 
-	half4 ReconstructFilterBlur(v2f i) : SV_Target
+	half4 ReconstructFilterBlur(PSInput i) : SV_Target
 	{
 		float2 x = i.uv;
 		float2 xf = x;
@@ -162,8 +162,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return sum;
 	}
 
-	// pass 4
-	half4 SimpleBlur(v2f i) : SV_Target
+	half4 SimpleBlur(PSInput i) : SV_Target
 	{
 		float2 x = i.uv;
 		float2 xf = x;
@@ -191,8 +190,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return sum;
 	}
 
-	// pass 5
-	half4 MotionVectorBlur(v2f i) : SV_Target
+	half4 MotionVectorBlur(PSInput i) : SV_Target
 	{
 		float2 x = i.uv;
 		float2 insideVector = (x * 2 - 1) * float2(1, _MainTex_TexelSize.w / _MainTex_TexelSize.z);
@@ -227,8 +225,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		return sum / (1 + MOTION_SAMPLES);
 	}
 
-	// pass 6
-	half4 ReconstructionDiscBlur(v2f i) : SV_Target
+	half4 ReconstructionDiscBlur(PSInput i) : SV_Target
 	{
 		float2 xf = i.uv;
 		float2 x = i.uv;
@@ -310,8 +307,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment CameraVelocity
 			ENDCG
 		}
@@ -320,8 +316,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment TileMax
 			ENDCG
 		}
@@ -330,8 +325,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment NeighbourMax
 			ENDCG
 		}
@@ -340,8 +334,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert 
+			#pragma vertex VSMain 
 			#pragma fragment ReconstructFilterBlur
 			ENDCG
 		}
@@ -350,8 +343,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment SimpleBlur
 			ENDCG
 		}
@@ -360,8 +352,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment MotionVectorBlur
 			ENDCG
 		}
@@ -370,8 +361,7 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment ReconstructionDiscBlur
 			ENDCG
 		}

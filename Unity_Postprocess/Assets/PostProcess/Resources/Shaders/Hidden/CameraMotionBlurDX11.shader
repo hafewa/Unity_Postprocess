@@ -14,14 +14,12 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 	}
 
 	CGINCLUDE
+	#pragma target 5.0
 	#include "UnityCG.cginc"
 	#include "CameraMotionBlurUtil.cginc"
-
 	#define NUM_SAMPLES (19)
 
-
-	// pass 0
-	float4 TileMax(v2f i) : SV_Target
+	float4 TileMax(PSInput i) : SV_Target
 	{
 		float2 tilemax = float2(0.0, 0.0);
 		float2 srcPos = i.uv - _MainTex_TexelSize.xy * _MaxRadiusOrKInPaper * 0.5;
@@ -37,8 +35,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		return float4(tilemax, 0, 1);
 	}
 
-	// pass 1
-	float4 NeighbourMax(v2f i) : SV_Target
+	float4 NeighbourMax(PSInput i) : SV_Target
 	{
 		float2 maxvel = float2(0.0, 0.0);
 		for (int y = -1; y <= 1; y++) 
@@ -52,8 +49,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		return float4(maxvel, 0, 1);
 	}
 
-	// pass 2
-	float4 ReconstructFilterBlur(v2f i) : SV_Target
+	float4 ReconstructFilterBlur(PSInput i) : SV_Target
 	{
 		float2 x = i.uv;
 		float2 xf = x;
@@ -137,8 +133,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 5.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment TileMax
 			ENDCG
 		}
@@ -147,8 +142,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 5.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment NeighbourMax
 			ENDCG
 		}
@@ -157,8 +151,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 5.0
-			#pragma vertex vert 
+			#pragma vertex VSMain 
 			#pragma fragment ReconstructFilterBlur
 			ENDCG
 		}

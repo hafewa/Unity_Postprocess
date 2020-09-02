@@ -61,8 +61,8 @@ namespace PostProcess
 		private Vector3 prevFramePos = Vector3.zero;
 		private int prevFrameCount = default;
 		private bool wasActive = false;
-
 		private new Camera camera = default;
+		private Transform cameraTransform = default;
 
 		private void Start()
 		{
@@ -76,6 +76,8 @@ namespace PostProcess
 		{
 			camera = GetComponent<Camera>();
 			camera.depthTextureMode |= DepthTextureMode.Depth;
+			cameraTransform = camera.transform;
+
 			replacementClear = Shader.Find("Hidden/PostProcess/MotionBlurClear");
 
 			// Mobile MotionBlur
@@ -128,13 +130,13 @@ namespace PostProcess
 
 		private void ReplacementShader(RenderTexture veloctityBuffer)
 		{
-			Camera cam = null;
-			if (excludeLayers.value != 0)
+			if (excludeLayers.value == 0)
 			{
-				cam = GetTmpCam();
+				return;
 			}
 
-			if (cam && excludeLayers.value != 0 && replacementClear && replacementClear.isSupported)
+			Camera cam = GetExcludeLayerCamera();
+			if (cam && replacementClear && replacementClear.isSupported)
 			{
 				cam.targetTexture = veloctityBuffer;
 				cam.cullingMask = excludeLayers;
@@ -142,15 +144,7 @@ namespace PostProcess
 			}
 		}
 
-		private void Remember()
-		{
-			prevViewProjMat = currentViewProjMat;
-			prevFrameForward = transform.forward;
-			prevFrameUp = transform.up;
-			prevFramePos = transform.position;
-		}
-
-		private Camera GetTmpCam()
+		private Camera GetExcludeLayerCamera()
 		{
 			if (tmpCam == null)
 			{
@@ -164,19 +158,25 @@ namespace PostProcess
 				{
 					tmpCam = go;
 				}
+				tmpCam.hideFlags = HideFlags.DontSave;
+				tmpCam.GetComponent<Camera>().enabled = false;
+				tmpCam.GetComponent<Camera>().depthTextureMode = DepthTextureMode.None;
+				tmpCam.transform.SetParent(camera.transform);
 			}
-
-			tmpCam.hideFlags = HideFlags.DontSave;
-			tmpCam.transform.position = camera.transform.position;
-			tmpCam.transform.rotation = camera.transform.rotation;
-			tmpCam.transform.localScale = camera.transform.localScale;
+			tmpCam.transform.position = cameraTransform.position;
+			tmpCam.transform.rotation = cameraTransform.rotation;
+			tmpCam.transform.localScale = cameraTransform.localScale;
 			tmpCam.GetComponent<Camera>().CopyFrom(camera);
-
-			tmpCam.GetComponent<Camera>().enabled = false;
-			tmpCam.GetComponent<Camera>().depthTextureMode = DepthTextureMode.None;
 			tmpCam.GetComponent<Camera>().clearFlags = CameraClearFlags.Nothing;
-
 			return tmpCam.GetComponent<Camera>();
+		}
+
+		private void Remember()
+		{
+			prevViewProjMat = currentViewProjMat;
+			prevFrameForward = transform.forward;
+			prevFrameUp = transform.up;
+			prevFramePos = transform.position;
 		}
 
 		private void StartFrame()
@@ -250,15 +250,12 @@ namespace PostProcess
 			}
 
 			// get plat form support rt
-			RenderTextureFormat rtFormat = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RGHalf) ? 
+			RenderTextureFormat format = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RGHalf) ? 
 				RenderTextureFormat.RGHalf : 
 				RenderTextureFormat.ARGBHalf;
 
 			// get temp textures
-			RenderTexture velocityBuffer = RenderTexture.GetTemporary(
-				RoundUp(source.width, velocityDownsample), 
-				RoundUp(source.height, velocityDownsample), 0, rtFormat);
-
+			RenderTexture velocityBuffer = RenderTexture.GetTemporary(RoundUp(source.width, velocityDownsample), RoundUp(source.height, velocityDownsample), 0, format);
 			maxVelocity = Mathf.Max(2.0f, maxVelocity);
 
 			float _maxVelocity = maxVelocity;
@@ -266,8 +263,8 @@ namespace PostProcess
 			int tileHeight = RoundUp(velocityBuffer.height, (int)maxVelocity);
 			_maxVelocity = velocityBuffer.width / tileWidth;
 
-			RenderTexture tileBuffer = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, rtFormat);
-			RenderTexture neighbourBuffer = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, rtFormat);
+			RenderTexture tileBuffer = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, format);
+			RenderTexture neighbourBuffer = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, format);
 			velocityBuffer.filterMode = FilterMode.Point;
 			tileBuffer.filterMode = FilterMode.Point;
 			neighbourBuffer.filterMode = FilterMode.Point;
@@ -290,9 +287,9 @@ namespace PostProcess
 
 			// mobile Shader Apply
 			material.SetMatrix("_ToPrevViewProjCombined", prevViewProjMat * Matrix4x4.Inverse(currentViewProjMat));
-			material.SetFloat("_MaxVelocity", _maxVelocity);
 			material.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
 			material.SetFloat("_MinVelocity", minVelocity);
+			material.SetFloat("_MaxVelocity", _maxVelocity);
 			material.SetFloat("_VelocityScale", velocityScale);
 			material.SetFloat("_Jitter", jitter);
 			material.SetTexture("_NoiseTex", noiseTexture);
@@ -339,14 +336,12 @@ namespace PostProcess
 					Graphics.Blit(source, destination, material, 5);
 				}
 				break;
-
 				case MotionBlurFilter.LocalBlur:
 				{
 					// SimpleBlur
 					Graphics.Blit(source, destination, material, 4);
 				}
 				break;
-
 				case MotionBlurFilter.Reconstruction:
 				{
 					// TileMax
@@ -357,7 +352,6 @@ namespace PostProcess
 					Graphics.Blit(source, destination, material, 3);
 				}
 				break;
-
 				case MotionBlurFilter.ReconstructionDX11:
 				{
 					// TileMax
@@ -368,7 +362,6 @@ namespace PostProcess
 					Graphics.Blit(source, destination, dx11Material ? dx11Material : material, dx11Material ? 2 : 3);
 				}
 				break;
-
 				case MotionBlurFilter.ReconstructionDisc:
 				{
 					// TileMax
