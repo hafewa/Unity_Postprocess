@@ -7,8 +7,20 @@
 	}
 
 	CGINCLUDE
-	#define RADIAL_SAMPLE_COUNT 6
+	#pragma target 3.0
 	#include "UnityCG.cginc"
+	#define RADIAL_SAMPLE_COUNT 6
+
+	sampler2D _CameraDepthTexture; 
+	sampler2D _MainTex; sampler2D _BlurTex;
+	float4 _MainTex_TexelSize; float4 _BlurTex_TexelSize; 
+	
+	float4 _ViewPortLightPos;
+	float4 _offsets;
+	float4 _ColorThreshold;
+	float4 _LightColor;
+	half _LightFactor, _PowFactor, _LightRadius, _DepthThreshold;
+
 
 	struct v2f_threshold
 	{
@@ -29,21 +41,6 @@
 		float2 uv  : TEXCOORD0;
 		float2 uv1 : TEXCOORD1;
 	};
-
-	sampler2D _CameraDepthTexture;
-	sampler2D _MainTex;
-	float4 _MainTex_TexelSize;
-	sampler2D _BlurTex;
-	float4 _BlurTex_TexelSize;
-	float4 _ViewPortLightPos;
-
-	float4 _offsets;
-	float4 _ColorThreshold;
-	float4 _LightColor;
-	float _LightFactor;
-	float _PowFactor;
-	float _LightRadius;
-	float _DepthThreshold;
 
 	v2f_threshold vert_threshold(appdata_img v)
 	{
@@ -126,7 +123,6 @@
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex vert_threshold
 			#pragma fragment frag_threshold
 			ENDCG
@@ -135,7 +131,6 @@
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex vert_blur
 			#pragma fragment frag_blur
 			ENDCG
@@ -144,7 +139,6 @@
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex vert_merge
 			#pragma fragment frag_merge
 			ENDCG

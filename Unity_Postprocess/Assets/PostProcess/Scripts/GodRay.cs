@@ -43,11 +43,16 @@ namespace PostProcess
 		[Range(1.0f, 4.0f)]
 		public float lightPowFactor = 3.0f;
 
-		private Camera targetCamera = null;
+		private new Camera camera = default;
 
-		private void Awake()
+
+		private void OnEnable()
 		{
-			targetCamera = GetComponent<Camera>();
+			camera = GetComponent<Camera>();
+			camera.depthTextureMode |= DepthTextureMode.Depth;
+
+			material = new Material(Shader.Find("Hidden/PostProcess/GodRay"));
+			material.hideFlags = HideFlags.HideAndDontSave;
 		}
 
 		/// <summary>
@@ -57,13 +62,7 @@ namespace PostProcess
 		/// <param name="destination"></param>
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
-			if (material == null)
-			{
-				material = new Material(Shader.Find("Hidden/PostProcess/GodRay"));
-				material.hideFlags = HideFlags.HideAndDontSave;
-			}
-
-			if (this.targetCamera == null || material == null)
+			if (camera == null || material == null)
 			{
 				Graphics.Blit(source, destination);
 				return;
@@ -73,7 +72,7 @@ namespace PostProcess
 			int rtHeight = source.height >> downSample;
 			RenderTexture temp1 = RenderTexture.GetTemporary(rtWidth, rtHeight, 0, source.format);
 
-			Vector3 viewPortLightPos = lightTransform == null ? new Vector3(.5f, .5f, 0) : targetCamera.WorldToViewportPoint(lightTransform.position);
+			Vector3 viewPortLightPos = lightTransform == null ? new Vector3(.5f, .5f, 0) : camera.WorldToViewportPoint(lightTransform.position);
 			material.SetVector(THRESHOLD_ID, colorThreshold);
 			material.SetVector(LIGHTPOS_ID, new Vector4(viewPortLightPos.x, viewPortLightPos.y, viewPortLightPos.z, 0));
 			material.SetFloat(RADIUS_IS, lightRadius);

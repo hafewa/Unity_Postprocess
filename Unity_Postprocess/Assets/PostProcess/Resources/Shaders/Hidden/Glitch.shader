@@ -11,27 +11,21 @@
 	sampler2D _MainTex;
 	half _BlockSize, _Speed, _MaxRGBSplitX, _MaxRGBSplitY;
 
-	struct VSInput
-	{
-		float4 vertex : POSITION;
-		float2 uv : TEXCOORD0;
-	};
-
-	struct VSOutput
+	struct PSInput
 	{
 		float2 uv : TEXCOORD0;
 		float4 vertex : SV_POSITION;
 	};
 
-	VSOutput VSMain(VSInput v)
+	PSInput VSMain(appdata_base v)
 	{
-		VSOutput o;
+		PSInput o = (PSInput)0;
 		o.vertex = UnityObjectToClipPos(v.vertex);
-		o.uv = v.uv;
+		o.uv = v.texcoord;
 		return o;
 	}
 
-	fixed4 PSMain(VSOutput i) : SV_Target
+	fixed4 PSMain(PSInput i) : SV_Target
 	{
 		half2 block = RandomNoise(floor(i.uv * _BlockSize), _Speed);
 		float displaceNoise = pow(block.x, 8.0) * pow(block.x, 3.0);
@@ -44,7 +38,6 @@
 		half4 colorR = tex2D(_MainTex, i.uv);
 		half4 colorG = tex2D(_MainTex, i.uv + offset);
 		half4 colorB = tex2D(_MainTex, i.uv - offset);
-
 		return half4(colorR.r , colorG.g, colorB.z, (colorR.a + colorG.a + colorB.a));
 	}
 	ENDCG

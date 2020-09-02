@@ -18,28 +18,22 @@ Shader "Hidden/PostProcess/Blur"
 		float4 _MainTex_TexelSize;
 		float _ReversePass;
 
-		struct VSInput
-		{
-			float4 vertex : POSITION;
-			float2 uv : TEXCOORD0;
-		};
-
-		struct VSOutput
+		struct PSInput
 		{
 			float2 uv : TEXCOORD0;
 			float4 vertex : SV_POSITION;
 			float2 offs : TEXCOORD1;
 		};
 
-		VSOutput VSMain(VSInput v)
+		PSInput VSMain(appdata_base v)
 		{
-			VSOutput o;
+			PSInput o = (PSInput)0;
 			o.vertex = UnityObjectToClipPos(v.vertex);
-			o.uv = v.uv;
+			o.uv = v.texcoord;
 			return o;
 		}
 
-		float4 PSMain1(VSOutput i) : SV_Target
+		float4 PSMain1(PSInput i) : SV_Target
 		{
 			float4 col = 0;
 			float2 unit = _ReversePass > 0.5 ? float2(_MainTex_TexelSize.x, 0) : float2(0,_MainTex_TexelSize.y);
@@ -53,7 +47,7 @@ Shader "Hidden/PostProcess/Blur"
 			return col;
 		}
 
-		float4 PSMain2(VSOutput i) : SV_Target
+		float4 PSMain2(PSInput i) : SV_Target
 		{
 			float4 col = 0;
 			float2 unit = _ReversePass > 0.5 ? float2(0,_MainTex_TexelSize.y) : float2(_MainTex_TexelSize.x, 0);

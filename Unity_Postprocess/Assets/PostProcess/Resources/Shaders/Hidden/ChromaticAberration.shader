@@ -24,27 +24,21 @@
 			float2 _GOffset;
 			float2 _BOffset;
 
-			struct VSInput
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
-
-			struct VSOutput
+			struct PSInput
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
 
-			VSOutput VSMain(VSInput v)
+			PSInput VSMain(appdata_base v)
 			{
-				VSOutput o;
+				PSInput o = (PSInput)0;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
+				o.uv = v.texcoord;
 				return o;
 			}
 
-			fixed4 PSMain(VSOutput i) : SV_Target
+			fixed4 PSMain(PSInput i) : SV_Target
 			{
 				fixed4 col;
 				col.r = tex2D(_MainTex, i.uv + _ROffset).r;

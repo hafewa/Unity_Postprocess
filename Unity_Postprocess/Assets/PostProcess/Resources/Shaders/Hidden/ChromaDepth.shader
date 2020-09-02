@@ -25,7 +25,7 @@
 		float4 ray : TEXCOORD1;
 	};
 
-	struct VSOutput
+	struct PSInput
 	{
 		float4 vertex : SV_POSITION;
 		float2 uv : TEXCOORD0;
@@ -48,9 +48,9 @@
 		return src - (src - src * src) * -factor;
 	}
 
-	VSOutput VSMain(VSInput v)
+	PSInput VSMain(VSInput v)
 	{
-		VSOutput o;
+		PSInput o = (PSInput)0;
 		o.vertex = UnityObjectToClipPos(v.vertex);
 		o.uv = v.uv.xy;
 		o.uv_depth = v.uv.xy;
@@ -65,7 +65,7 @@
 		return o;
 	}
 
-	fixed4 PSMain(VSOutput i) : SV_Target
+	fixed4 PSMain(PSInput i) : SV_Target
 	{
 		float4 color = tex2D(_MainTex, i.uv);
 		float rawDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv_depth);
@@ -74,24 +74,19 @@
 		float3 wsPos = _CameraWS + wsDir;
 		half4 scannerCol = half4(0, 0, 0, 0);
 
-		// CameraとTriggerからの距離を計算
+		// distance to camera position from target position
 		float dist = distance(wsPos, _ScannerWS);
-
-		// 差分
 		float diff = 1 - (_ScanDistance - dist) / (_ScanWidth);
-
-		// powの負荷を考慮してCurveで再計算
+		// re calculate pow
 		fixed4 edge = lerp(_MidColor, _LeadColor, Curve(diff, _LeadSharp)); /*pow(diff, _LeadSharp)*/
 
 		if (dist < _ScanDistance && dist > _ScanDistance - _ScanWidth && depth < 1)
 		{
 			scannerCol = lerp(_TrailColor, edge, diff);
 #ifdef NOISE_ON
-			// NoiseTex
 			scannerCol += HorizontalTex(i.uv) * _HBarColor;
 #endif
 #ifdef NOISE_OFF
-			// Fraction
 			scannerCol += HorizontalBars(i.uv) * _HBarColor;
 #endif
 			scannerCol *= diff;

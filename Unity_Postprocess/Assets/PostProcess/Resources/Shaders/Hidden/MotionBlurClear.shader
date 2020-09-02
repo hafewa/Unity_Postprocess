@@ -19,32 +19,31 @@ Shader "Hidden/PostProcess/MotionBlurClear"
 			#pragma target 3.0
 			#pragma vertex VSMain
 			#pragma fragment PSMain
-
 			#include "UnityCG.cginc"
+			sampler2D _CameraDepthTexture;
 
 			struct VSInput 
 			{
 				float4 vertex : POSITION;
 			};
 
-			struct VSOutput 
+			struct PSInput 
 			{
 				float4 pos : SV_POSITION;
 				float4 screen : TEXCOORD0;
 			};
 
-			sampler2D _CameraDepthTexture;
 
-			VSOutput VSMain(VSInput v)
+			PSInput VSMain(VSInput v)
 			{
-				VSOutput o;
+				PSInput o = (PSInput)0;
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.screen = ComputeScreenPos(o.pos);
 				COMPUTE_EYEDEPTH(o.screen.z);
 				return o;
 			}
 
-			float4 PSMain(VSOutput i) : SV_Target
+			float4 PSMain(PSInput i) : SV_Target
 			{
 				// superlame: manual depth test needed as we can't bind depth, FIXME for 4.x
 				// alternatively implement SM > 3 version where we write out custom depth

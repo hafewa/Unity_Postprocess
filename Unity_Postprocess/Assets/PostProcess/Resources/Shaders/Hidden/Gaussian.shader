@@ -9,23 +9,18 @@ Shader "Hidden/PostProcess/Gaussian"
 	CGINCLUDE
 	#include "UnityCG.cginc"
 
-	struct appdata
-	{
-		float4 vertex : POSITION;
-		float2 uv : TEXCOORD0;
-	};
 
-	struct v2f
+	struct PSInput
 	{
 		float2 uv : TEXCOORD0;
 		float4 vertex : SV_POSITION;
 	};
 
-	v2f vert(appdata v)
+	PSInput VSMain(appdata_base v)
 	{
-		v2f o;
+		PSInput o = (PSInput)0;
 		o.vertex = UnityObjectToClipPos(v.vertex);
-		o.uv = v.uv;
+		o.uv = v.texcoord;
 		return o;
 	}
 
@@ -53,13 +48,13 @@ Shader "Hidden/PostProcess/Gaussian"
 	}
 
 	// 1pass
-	fixed4 frag_threshold(v2f i) : SV_Target
+	fixed4 frag_threshold(PSInput i) : SV_Target
 	{
 		return tex2D(_MainTex, i.uv) - _Threshold;
 	}
 
 	// 2pass
-	fixed4 frag_cross_bloom(v2f i) : SV_Target
+	fixed4 frag_cross_bloom(PSInput i) : SV_Target
 	{
 		float3 col = 0;
 		float2 pixel = (_ScreenParams.zw - 1) * _Radius;
@@ -72,7 +67,7 @@ Shader "Hidden/PostProcess/Gaussian"
 	}
 
 	// 3pass
-	fixed4 frag_gaussian_x(v2f i) : SV_Target
+	fixed4 frag_gaussian_x(PSInput i) : SV_Target
 	{
 		float2 pixel = (_ScreenParams.zw - 1) * _Radius;
 		float3 col = gaussian(float2(pixel.x, 0), i.uv);
@@ -82,7 +77,7 @@ Shader "Hidden/PostProcess/Gaussian"
 	}
 
 	// 4pass
-	fixed4 frag_gaussian_y(v2f i) : SV_Target
+	fixed4 frag_gaussian_y(PSInput i) : SV_Target
 	{
 		float2 pixel = (_ScreenParams.zw - 1) * _Radius;
 		float3 col = gaussian(float2(0,  pixel.y), i.uv);
@@ -92,7 +87,7 @@ Shader "Hidden/PostProcess/Gaussian"
 	}
 
 	// 5pass
-	fixed4 frag_add(v2f i) : SV_Target
+	fixed4 frag_add(PSInput i) : SV_Target
 	{
 		float3 col = 0;
 		col += tex2D(_MainTex, i.uv);
@@ -110,7 +105,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		{
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment frag_threshold
 			ENDCG
 		}
@@ -119,7 +114,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		{
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment frag_cross_bloom
 			ENDCG
 		}
@@ -128,7 +123,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		{
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment frag_gaussian_x
 			ENDCG
 		}
@@ -137,7 +132,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		{
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment frag_gaussian_y
 			ENDCG
 		}
@@ -146,7 +141,7 @@ Shader "Hidden/PostProcess/Gaussian"
 		{
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
+			#pragma vertex VSMain
 			#pragma fragment frag_add
 			ENDCG
 		}

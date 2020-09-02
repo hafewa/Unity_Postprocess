@@ -22,26 +22,6 @@
 			#pragma fragment PSMain
 			#include "UnityCG.cginc"
 
-			struct VSInput
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
-
-			struct VSOutput
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-			};
-
-			VSOutput VSMain(VSInput v)
-			{
-				VSOutput o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
-				return o;
-			}
-
 			sampler2D _MainTex;
 			half _Samples;
 			half _EffectAmount;
@@ -49,7 +29,21 @@
 			half _CenterY;
 			half _Radius;
 
-			fixed4 PSMain(VSOutput i) : SV_Target
+			struct PSInput
+			{
+				float2 uv : TEXCOORD0;
+				float4 vertex : SV_POSITION;
+			};
+
+			PSInput VSMain(appdata_base v)
+			{
+				PSInput o = (PSInput)0;
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.uv = v.texcoord;
+				return o;
+			}
+
+			fixed4 PSMain(PSInput i) : SV_Target
 			{
 				fixed4 col = fixed4(0,0,0,0);
 				float2 dist = i.uv - float2(_CenterX, _CenterY);

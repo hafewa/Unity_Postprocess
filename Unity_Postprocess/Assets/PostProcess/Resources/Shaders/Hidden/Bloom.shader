@@ -15,24 +15,18 @@
 	half4 _Color;
 	half _Intensity;
 
-	struct appdata
-	{
-		float4 vertex : POSITION;
-		float2 uv : TEXCOORD0;
-	};
-
-	struct v2f
+	struct PSInput
 	{
 		float4 pos : SV_POSITION;
 		float2 uv : TEXCOORD0;
 	};
 
-	v2f vert(appdata v)
+	PSInput VSMain(appdata_base v)
 	{
-		v2f i;
-		i.pos = UnityObjectToClipPos(v.vertex);
-		i.uv = v.uv;
-		return i;
+		PSInput o = (PSInput)0;
+		o.pos = UnityObjectToClipPos(v.vertex);
+		o.uv = v.texcoord;
+		return o;
 	}
 
 	half3 sample (float2 uv)
@@ -68,9 +62,9 @@
 		{
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
-			#pragma fragment frag
-			half4 frag(v2f i) : SV_Target
+			#pragma vertex VSMain
+			#pragma fragment PSMain
+			half4 PSMain(PSInput i) : SV_Target
 			{
 				return half4(filter(sampleBox(i.uv, 1)), 1);
 			}
@@ -82,9 +76,9 @@
 		{
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
-			#pragma fragment frag
-			half4 frag(v2f i) : SV_Target
+			#pragma vertex VSMain
+			#pragma fragment PSMain
+			half4 PSMain(PSInput i) : SV_Target
 			{
 				return half4(sampleBox(i.uv, 1), 1);
 			}
@@ -97,9 +91,9 @@
 			Blend One One
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
-			#pragma fragment frag
-			half4 frag(v2f i) : SV_Target
+			#pragma vertex VSMain
+			#pragma fragment PSMain
+			half4 PSMain(PSInput i) : SV_Target
 			{
 				return half4(sampleBox(i.uv, 0.5), 1);
 			}
@@ -111,9 +105,9 @@
 		{
 			CGPROGRAM
 			#pragma target 3.0
-			#pragma vertex vert
-			#pragma fragment frag
-			half4 frag(v2f i) : SV_Target
+			#pragma vertex VSMain
+			#pragma fragment PSMain
+			half4 PSMain(PSInput i) : SV_Target
 			{
 				half4 c = tex2D(_SourceTex, TRANSFORM_TEX(i.uv, _SourceTex));
 				c.rgb += _Intensity * sampleBox(i.uv, 0.5);

@@ -8,24 +8,19 @@ Shader "Hidden/PostProcess/MotionBlur"
 	}
 
 	CGINCLUDE
+	#pragma target 3.0
 	#include "UnityCG.cginc"
 	sampler2D _MainTex; float4 _MainTex_ST;
 
-	struct VSInput
-	{
-		float4 vertex : POSITION;
-		float2 texcoord : TEXCOORD;
-	};
-
-	struct VSOutput
+	struct PSInput
 	{
 		float4 vertex : SV_POSITION;
 		float2 texcoord : TEXCOORD;
 	};
 
-	VSOutput VSMain(VSInput v)
+	PSInput VSMain(appdata_base v)
 	{
-		VSOutput o;
+		PSInput o = (PSInput)0;
 		o.vertex = UnityObjectToClipPos(v.vertex);
 		o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 		return o;
@@ -47,13 +42,12 @@ Shader "Hidden/PostProcess/MotionBlur"
 			}
 
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex VSMain
 			#pragma fragment PSMain
 
 			fixed _AccumOrig;
 
-			half4 PSMain(VSOutput i) : SV_Target
+			half4 PSMain(PSInput i) : SV_Target
 			{
 				return half4(tex2D(_MainTex, i.texcoord).rgb, _AccumOrig);
 			}
@@ -72,11 +66,10 @@ Shader "Hidden/PostProcess/MotionBlur"
 			}
 
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex VSMain
 			#pragma fragment PSMain
 
-			half4 PSMain(VSOutput i) : SV_Target
+			half4 PSMain(PSInput i) : SV_Target
 			{
 				return tex2D(_MainTex, i.texcoord);
 			}

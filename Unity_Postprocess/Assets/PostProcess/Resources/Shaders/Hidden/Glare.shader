@@ -5,47 +5,44 @@
 		_MainTex("Texture", 2D) = "white" {}
 	}
 
+	CGINCLUDE
+	#pragma target 3.0
+	#include "UnityCG.cginc"
+	sampler2D _MainTex;
+	float4 _MainTex_ST;
+	float4 _MainTex_TexelSize;
+	float _Threshold;
+	float _Intensity;
+	ENDCG
+
 	SubShader
 	{
 		Tags { "RenderType" = "Opaque" }
 
 		Cull Off ZWrite Off ZTest Always
 
-		// 0: 明度を抽出するパス
+		// intensity pass
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
-			#pragma fragment frag
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 
-			#include "UnityCG.cginc"
-
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
-
-			struct v2f
+			struct PSInput
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
-			float _Threshold;
-
-			v2f vert(appdata v)
+			PSInput VSMain(appdata_base v)
 			{
-				v2f o;
+				PSInput o = (PSInput)0;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
 				return o;
 			}
 
-			fixed4 frag(v2f i) : SV_Target
+			fixed4 PSMain(PSInput i) : SV_Target
 			{
 				half4 col = tex2D(_MainTex, i.uv);
 				half brightness = max(col.r, max(col.g, col.b));
@@ -56,23 +53,14 @@
 			ENDCG
 		}
 
-		//1: スターを作るパス
+		// 1 make star pass
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
-			#pragma fragment frag
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 
-			#include "UnityCG.cginc"
-
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
-
-			struct v2f
+			struct PSInput
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
@@ -80,25 +68,22 @@
 				half pathFactor : TEXCOORD2;
 			};
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
-			half4 _MainTex_TexelSize;
 			// x: offsetU, y: offsetY, z: pathIndex
 			float3 _Params;
 			float _Attenuation;
 			float _Iteration;
 
-			v2f vert(appdata v)
+			PSInput VSMain(appdata_base v)
 			{
-				v2f o;
+				PSInput o = (PSInput)0;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
 				o.pathFactor = pow(4, _Params.z);
 				o.uvOffset = half2(_Params.x, _Params.y) * _MainTex_TexelSize.xy * o.pathFactor;
 				return o;
 			}
 
-			fixed4 frag(v2f i) : SV_Target
+			fixed4 PSMain(PSInput i) : SV_Target
 			{
 				half4 col = half4(0, 0, 0, 1);
 
@@ -119,35 +104,24 @@
 			Blend One One
 			ColorMask RGB
 			CGPROGRAM
-			#pragma target 3.0
-			#pragma vertex vert
-			#pragma fragment frag
-			#include "UnityCG.cginc"
+			#pragma vertex VSMain
+			#pragma fragment PSMain
 
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
-
-			struct v2f
+			struct PSInput
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
 
-			sampler2D _MainTex; float4 _MainTex_ST;
-			float _Intensity;
-
-			v2f vert(appdata v)
+			PSInput VSMain(appdata_base v)
 			{
-				v2f o;
+				PSInput o = (PSInput)0;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
 				return o;
 			}
 
-			fixed4 frag(v2f i) : SV_Target
+			fixed4 PSMain(PSInput i) : SV_Target
 			{
 				return tex2D(_MainTex, i.uv) * _Intensity;
 			}

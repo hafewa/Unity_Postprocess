@@ -19,27 +19,21 @@
 
 			sampler2D _MainTex; float4 _MainTex_TexelSize;
 
-			struct VSInput
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
-
-			struct VSOutput
+			struct PSInput
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
 
-			VSOutput VSMain(VSInput v)
+			PSInput VSMain(appdata_base v)
 			{
-				VSOutput o;
+				PSInput o = (PSInput)0;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
+				o.uv = v.texcoord;
 				return o;
 			}
 
-			fixed4 PSMain(VSOutput i) : SV_Target
+			fixed4 PSMain(PSInput i) : SV_Target
 			{
 				// Luminance
 				half3 luma = half3(0.30, 0.59, 0.11);

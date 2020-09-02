@@ -43,7 +43,7 @@ Shader "Hidden/PostProcess/Fog"
 		float2 uv : TEXCOORD0;
 	};
 
-	struct VSOutput
+	struct PSInput
 	{
 		float4 pos : SV_POSITION;
 		float2 uv : TEXCOORD0;
@@ -84,9 +84,9 @@ Shader "Hidden/PostProcess/Fog"
 		return g;
 	}
 
-	VSOutput VSMain(VSInput v)
+	PSInput VSMain(VSInput v)
 	{
-		VSOutput o;
+		PSInput o = (PSInput)0;
 		half index = v.vertex.z;
 		v.vertex.z = 0.1;
 		o.pos = UnityObjectToClipPos(v.vertex);
@@ -104,7 +104,7 @@ Shader "Hidden/PostProcess/Fog"
 		return o;
 	}
 
-	float4 PSMain(VSOutput i) : SV_Target
+	float4 PSMain(PSInput i) : SV_Target
 	{
 		float4 color = tex2D(_MainTex, i.uv);
 		float rawDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv_depth);

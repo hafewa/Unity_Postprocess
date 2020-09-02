@@ -26,27 +26,21 @@
 		return strength;
 	}
 
-	struct VSInput
-	{
-		float4 vertex : POSITION;
-		float2 uv : TEXCOORD0;
-	};
-
-	struct VSOutput
+	struct PSInput
 	{
 		float2 uv : TEXCOORD0;
 		float4 vertex : SV_POSITION;
 	};
 
-	VSOutput VSMain(VSInput v)
+	PSInput VSMain(appdata_base v)
 	{
-		VSOutput o;
+		PSInput o = (PSInput)0;
 		o.vertex = UnityObjectToClipPos(v.vertex);
-		o.uv = v.uv;
+		o.uv = v.texcoord;
 		return o;
 	}
 
-	half4 Frag_Horizontal(VSOutput i) : SV_Target
+	half4 Frag_Horizontal(PSInput i) : SV_Target
 	{
 		half strength = MultiplyFrequency();
 		float uv_y = i.uv.y * _Resolution.y;
@@ -60,7 +54,7 @@
 		return  half4(colorRB.r, colorG.g, colorRB.b, colorRB.a + colorG.a);
 	}
 
-	half4 Frag_Vertical(VSOutput i) : SV_Target
+	half4 Frag_Vertical(PSInput i) : SV_Target
 	{
 		half strength = MultiplyFrequency();
 		float uv_x = i.uv.x * _Resolution.x;
@@ -74,8 +68,7 @@
 		return half4(colorRB.r, colorG.g, colorRB.b, colorRB.a + colorG.a);
 	}
 
-	// pass 2
-	half4 Frag_Mix(VSOutput i) : SV_Target
+	half4 Frag_Mix(PSInput i) : SV_Target
 	{
 		half4 a = Frag_Horizontal(i);
 		half4 b = Frag_Vertical(i);
