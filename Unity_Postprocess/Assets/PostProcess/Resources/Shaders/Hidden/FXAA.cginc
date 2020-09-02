@@ -1,3 +1,6 @@
+#ifndef FXAA_INCLUDE
+#define FXAA_INCLUDE
+
 
 #ifndef FXAA_PS3
 	#define FXAA_PS3 0
@@ -45,21 +48,30 @@
 
 #ifndef FXAA_DISCARD
 	#define FXAA_DISCARD 0
-#endif    
+#endif
 
-#ifndef FXAA_FAST_PIXEL_OFFSET
-	#ifdef GL_EXT_gpu_shader4
-		#define FXAA_FAST_PIXEL_OFFSET 1
-	#endif
-	#ifdef GL_NV_gpu_shader5
-		#define FXAA_FAST_PIXEL_OFFSET 1
-	#endif
-	#ifdef GL_ARB_gpu_shader5
-		#define FXAA_FAST_PIXEL_OFFSET 1
-	#endif
-	#ifndef FXAA_FAST_PIXEL_OFFSET
-		#define FXAA_FAST_PIXEL_OFFSET 0
-	#endif
+#ifndef FXAA_CONSOLE__EDGE_THRESHOLD
+	#if 1
+		#define FXAA_CONSOLE__EDGE_THRESHOLD 0.125
+	#else
+		#define FXAA_CONSOLE__EDGE_THRESHOLD 0.25
+	#endif        
+#endif
+
+#ifndef FXAA_CONSOLE__EDGE_THRESHOLD_MIN
+	#define FXAA_CONSOLE__EDGE_THRESHOLD_MIN 0.05
+#endif
+
+#ifndef FXAA_QUALITY__EDGE_THRESHOLD
+	#define FXAA_QUALITY__EDGE_THRESHOLD (1.0/6.0)
+#endif
+
+#ifndef FXAA_QUALITY__EDGE_THRESHOLD_MIN
+	#define FXAA_QUALITY__EDGE_THRESHOLD_MIN (1.0/12.0)
+#endif
+
+#ifndef FXAA_QUALITY__SUBPIX
+	#define FXAA_QUALITY__SUBPIX (3.0/4.0)
 #endif
 
 #ifndef FXAA_GATHER4_ALPHA
@@ -97,26 +109,10 @@
 	#endif        
 #endif
 
-#ifndef FXAA_CONSOLE__EDGE_THRESHOLD_MIN
-	#define FXAA_CONSOLE__EDGE_THRESHOLD_MIN 0.05
-#endif
-
-#ifndef FXAA_QUALITY__EDGE_THRESHOLD
-	#define FXAA_QUALITY__EDGE_THRESHOLD (1.0/6.0)
-#endif
-
-#ifndef FXAA_QUALITY__EDGE_THRESHOLD_MIN
-	#define FXAA_QUALITY__EDGE_THRESHOLD_MIN (1.0/12.0)
-#endif
-
-#ifndef FXAA_QUALITY__SUBPIX
-	#define FXAA_QUALITY__SUBPIX (3.0/4.0)
-#endif
-
 
 float4 luma(float4 color)
 {
-	color.a = dot( color.rgb, float3(0.299f, 0.587f, 0.114f));
+	color.a = dot(color.rgb, float3(0.299f, 0.587f, 0.114f));
 	return color;
 }
 
@@ -125,16 +121,13 @@ float4 luma(float4 color)
 #define FxaaFloat2 float2
 #define FxaaFloat3 float3
 #define FxaaFloat4 float4
-#define FxaaDiscard clip(-1)
-#define FxaaDot3(a, b) dot(a, b)
-#define FxaaSat(x) saturate(x)
-#define FxaaLerp(x,y,s) lerp(x,y,s)
-#define FxaaTex sampler2D
+
 #define FxaaTexTop(t, p) luma(tex2Dlod(t, float4(p, 0.0, 0.0)))
+
 #define FxaaTexOff(t, p, o, r) luma(tex2Dlod(t, float4(p + (o * r), 0, 0)))
 
 // PSMain_Speed
-half4 PSMain_Speed(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, float4 rcpFrameOpt)
+half4 PSMain_Speed(float2 pos, float4 posPos, sampler2D tex, float2 fxaaFrame, float4 fxaaFrameOpt)
 {
 	half4 dir;
 	dir.y = 0.0;
@@ -163,7 +156,7 @@ half4 PSMain_Speed(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, floa
 	half lumaMaxM = max(lumaMax, rgbyM.w); 
 	if((lumaMaxM - lumaMinM) < max(FXAA_CONSOLE__EDGE_THRESHOLD_MIN, lumaMax * FXAA_CONSOLE__EDGE_THRESHOLD))
 	#if (FXAA_DISCARD == 1)
-		FxaaDiscard;
+		clip(-1);
 	#else
 		return rgbyM;
 	#endif
@@ -178,20 +171,20 @@ half4 PSMain_Speed(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, floa
 	dir1_pos.zw = pos.xy;
 	dir2_pos.zw = pos.xy;
 	half4 temp1N;
-	temp1N.xy = dir1_pos.zw - dir1_pos.xy * rcpFrameOpt.zw;
+	temp1N.xy = dir1_pos.zw - dir1_pos.xy * fxaaFrameOpt.zw;
 
 	temp1N = FxaaTexTop(tex, temp1N.xy); 
 	half4 rgby1;
-	rgby1.xy = dir1_pos.zw + dir1_pos.xy * rcpFrameOpt.zw;
+	rgby1.xy = dir1_pos.zw + dir1_pos.xy * fxaaFrameOpt.zw;
 	rgby1 = FxaaTexTop(tex, rgby1.xy); 
 	rgby1 = (temp1N + rgby1) * 0.5;
 
 	half4 temp2N;
-	temp2N.xy = dir2_pos.zw - dir2_pos.xy * rcpFrameOpt.xy;
+	temp2N.xy = dir2_pos.zw - dir2_pos.xy * fxaaFrameOpt.xy;
 	temp2N = FxaaTexTop(tex, temp2N.xy); 
 
 	half4 rgby2;
-	rgby2.xy = dir2_pos.zw + dir2_pos.xy * rcpFrameOpt.xy;
+	rgby2.xy = dir2_pos.zw + dir2_pos.xy * fxaaFrameOpt.xy;
 	rgby2 = FxaaTexTop(tex, rgby2.xy);
 	rgby2 = (temp2N + rgby2) * 0.5; 
 
@@ -200,9 +193,8 @@ half4 PSMain_Speed(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, floa
 	half lumaMax = max(max(lumaNw.w, lumaSw.w), max(lumaNe.w, lumaSe.w));
 #endif
 	rgby2 = (rgby2 + rgby1) * 0.5;
-	bool twoTapLt = rgby2.w < lumaMin; 
-	bool twoTapGt = rgby2.w > lumaMax; 
-	if(twoTapLt || twoTapGt) 
+
+	if(rgby2.w < lumaMin || rgby2.w > lumaMax) 
 	{
 		rgby2 = rgby1;
 	}
@@ -211,8 +203,7 @@ half4 PSMain_Speed(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, floa
 
 
 
-// PSMain_Quality
-float4 PSMain_Quality(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, float4 rcpFrameOpt)
+float4 PSMain_Quality(float2 pos, float4 posPos, sampler2D tex, float2 fxaaFrame, float4 fxaaFrameOpt)
 {   
 	float2 posM;
 	posM.x = pos.x;
@@ -222,8 +213,8 @@ float4 PSMain_Quality(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, f
 		float4 rgbyM = FxaaTexTop(tex, posM);
 		#define lumaM rgbyM.w
 		#endif
-		float4 luma4A = FxaaTexAlpha4(tex, posM, rcpFrame.xy);
-		float4 luma4B = FxaaTexOffAlpha4(tex, posM, FxaaInt2(-1, -1), rcpFrame.xy);
+		float4 luma4A = FxaaTexAlpha4(tex, posM, fxaaFrame.xy);
+		float4 luma4B = FxaaTexOffAlpha4(tex, posM, FxaaInt2(-1, -1), fxaaFrame.xy);
 		#if (FXAA_DISCARD == 1)
 			#define lumaM luma4A.w
 		#endif
@@ -236,10 +227,10 @@ float4 PSMain_Quality(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, f
 #else
 	float4 rgbyM = FxaaTexTop(tex, posM);
 	#define lumaM rgbyM.w
-	float lumaS = FxaaTexOff(tex, posM, FxaaInt2( 0, 1), rcpFrame.xy).w;
-	float lumaE = FxaaTexOff(tex, posM, FxaaInt2( 1, 0), rcpFrame.xy).w;
-	float lumaN = FxaaTexOff(tex, posM, FxaaInt2( 0,-1), rcpFrame.xy).w;
-	float lumaW = FxaaTexOff(tex, posM, FxaaInt2(-1, 0), rcpFrame.xy).w;
+	float lumaS = FxaaTexOff(tex, posM, FxaaInt2(0, 1), fxaaFrame.xy).w;
+	float lumaE = FxaaTexOff(tex, posM, FxaaInt2(1, 0), fxaaFrame.xy).w;
+	float lumaN = FxaaTexOff(tex, posM, FxaaInt2(0,-1), fxaaFrame.xy).w;
+	float lumaW = FxaaTexOff(tex, posM, FxaaInt2(-1,0), fxaaFrame.xy).w;
 #endif
 
 	float maxSM = max(lumaS, lumaM);
@@ -258,20 +249,20 @@ float4 PSMain_Quality(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, f
 	if(earlyExit) 
 	{
 		#if (FXAA_DISCARD == 1)
-			FxaaDiscard;
+			clip(-1);
 		#else
 			return rgbyM;
 		#endif
 	}
 
 	#if (FXAA_GATHER4_ALPHA == 0) 
-		float lumaNW = FxaaTexOff(tex, posM, FxaaInt2(-1,-1), rcpFrame.xy).w;
-		float lumaSE = FxaaTexOff(tex, posM, FxaaInt2( 1, 1), rcpFrame.xy).w;
-		float lumaNE = FxaaTexOff(tex, posM, FxaaInt2( 1,-1), rcpFrame.xy).w;
-		float lumaSW = FxaaTexOff(tex, posM, FxaaInt2(-1, 1), rcpFrame.xy).w;
+		float lumaNW = FxaaTexOff(tex, posM, FxaaInt2(-1,-1), fxaaFrame.xy).w;
+		float lumaSE = FxaaTexOff(tex, posM, FxaaInt2( 1, 1), fxaaFrame.xy).w;
+		float lumaNE = FxaaTexOff(tex, posM, FxaaInt2( 1,-1), fxaaFrame.xy).w;
+		float lumaSW = FxaaTexOff(tex, posM, FxaaInt2(-1, 1), fxaaFrame.xy).w;
 	#else
-		float lumaNE = FxaaTexOff(tex, posM, FxaaInt2(1, -1), rcpFrame.xy).w;
-		float lumaSW = FxaaTexOff(tex, posM, FxaaInt2(-1, 1), rcpFrame.xy).w;
+		float lumaNE = FxaaTexOff(tex, posM, FxaaInt2(1, -1), fxaaFrame.xy).w;
+		float lumaSW = FxaaTexOff(tex, posM, FxaaInt2(-1, 1), fxaaFrame.xy).w;
 	#endif
 
 	float lumaNS = lumaN + lumaS;
@@ -296,13 +287,13 @@ float4 PSMain_Quality(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, f
 	float edgeVert = abs(edgeVert3) + edgeVert4;
 
 	float subpixNWSWNESE = lumaNWSW + lumaNESE; 
-	float lengthSign = rcpFrame.x;
+	float lengthSign = fxaaFrame.x;
 	bool horzSpan = edgeHorz >= edgeVert;
 	float subpixA = subpixNSWE * 2.0 + subpixNWSWNESE; 
 
 	if(!horzSpan) { lumaN = lumaW; }
 	if(!horzSpan) {lumaS = lumaE; }
-	if(horzSpan) {lengthSign = rcpFrame.y;}
+	if(horzSpan) {lengthSign = fxaaFrame.y;}
 	float subpixB = (subpixA * (1.0/12.0)) - lumaM;
 
 	float gradientN = lumaN - lumaM;
@@ -313,16 +304,16 @@ float4 PSMain_Quality(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, f
 	float gradient = max(abs(gradientN), abs(gradientS));
 	if(pairN) {lengthSign = -lengthSign;}
 
-	float subpixC = FxaaSat(abs(subpixB) * subpixRcpRange);
+	float subpixC = saturate(abs(subpixB) * subpixRcpRange);
 
 	float2 posB;
 	posB.x = posM.x;
 	posB.y = posM.y;
 	float2 offNP;
-	offNP.x = (!horzSpan) ? 0.0 : rcpFrame.x;
-	offNP.y = ( horzSpan) ? 0.0 : rcpFrame.y;
+	offNP.x = (!horzSpan) ? 0.0 : fxaaFrame.x;
+	offNP.y = ( horzSpan) ? 0.0 : fxaaFrame.y;
 	if(!horzSpan) {posB.x += lengthSign * 0.5;}
-	if( horzSpan) {posB.y += lengthSign * 0.5;}
+	if(horzSpan) {posB.y += lengthSign * 0.5;}
 
 	float2 posN;
 	posN.x = posB.x - offNP.x;
@@ -444,4 +435,4 @@ float4 PSMain_Quality(float2 pos, float4 posPos, FxaaTex tex, float2 rcpFrame, f
 	return FxaaTexTop(tex, posM); 
 }
 
-
+#endif

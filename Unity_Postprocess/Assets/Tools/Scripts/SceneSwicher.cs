@@ -21,11 +21,17 @@ namespace Motion.Tools
 
 		[SerializeField]
 		private Button sceneButton = default;
-		private int index = 0;
+
+		[SerializeField]
+		private Button fxaaButton = default;
+
+		[SerializeField]
+		private Text fxaaText = default;
 
 		[SerializeField]
 		private Text fpsText = default;
 
+		private int index = 0;
 		private float refreshSecs;
 		private float delta;
 
@@ -33,6 +39,7 @@ namespace Motion.Tools
 		private void Start()
 		{
 			sceneButton?.onClick.AddListener(OnNext);
+			fxaaButton?.onClick.AddListener(OnFXAAClickCallBack);
 		}
 
 		private void Update()
@@ -62,6 +69,25 @@ namespace Motion.Tools
 				++index;
 			}
 			SceneManager.LoadScene(scenes[index]);
+		}
+
+		private void OnFXAAClickCallBack()
+		{
+			if (!fxaaButton || !fxaaText)
+			{
+				return;
+			}
+
+			if (Camera.main)
+			{
+				var fxaa = Camera.main.GetComponent<PostProcess.FXAA>() ?? Camera.main.gameObject.AddComponent<PostProcess.FXAA>();
+				if (fxaa)
+				{
+					fxaa.enabled = !fxaa.enabled;
+					fxaaText.text = string.Format("FXAA_{0}", fxaa.enabled ? "ON" : "OFF");
+				}
+			}
+			
 		}
 	}
 
