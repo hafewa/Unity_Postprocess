@@ -2,18 +2,6 @@
 #define FXAA_INCLUDE
 
 
-#ifndef FXAA_PS3
-	#define FXAA_PS3 0
-#endif
-
-#ifndef FXAA_360
-	#define FXAA_360 0
-#endif
-
-#ifndef FXAA_360_OPT
-	#define FXAA_360_OPT 0
-#endif
-
 #ifndef FXAA_PC
 	#define FXAA_PC 0
 #endif
@@ -121,9 +109,7 @@ float4 luma(float4 color)
 #define FxaaFloat2 float2
 #define FxaaFloat3 float3
 #define FxaaFloat4 float4
-
 #define FxaaTexTop(t, p) luma(tex2Dlod(t, float4(p, 0.0, 0.0)))
-
 #define FxaaTexOff(t, p, o, r) luma(tex2Dlod(t, float4(p + (o * r), 0, 0)))
 
 // PSMain_Speed
@@ -159,6 +145,7 @@ half4 PSMain_Speed(float2 pos, float4 posPos, sampler2D tex, float2 fxaaFrame, f
 		clip(-1);
 	#else
 		return rgbyM;
+		//return float4(rgbyM.r, 0, 0, 1);
 	#endif
 #endif
 
@@ -199,6 +186,7 @@ half4 PSMain_Speed(float2 pos, float4 posPos, sampler2D tex, float2 fxaaFrame, f
 		rgby2 = rgby1;
 	}
 	return rgby2;
+	//return float4(rgby2.r, 0, 0, 1);
 }
 
 
@@ -252,6 +240,7 @@ float4 PSMain_Quality(float2 pos, float4 posPos, sampler2D tex, float2 fxaaFrame
 			clip(-1);
 		#else
 			return rgbyM;
+			//return float4(rgbyM.r, 0, 0, 1);
 		#endif
 	}
 
@@ -291,9 +280,11 @@ float4 PSMain_Quality(float2 pos, float4 posPos, sampler2D tex, float2 fxaaFrame
 	bool horzSpan = edgeHorz >= edgeVert;
 	float subpixA = subpixNSWE * 2.0 + subpixNWSWNESE; 
 
-	if(!horzSpan) { lumaN = lumaW; }
-	if(!horzSpan) {lumaS = lumaE; }
-	if(horzSpan) {lengthSign = fxaaFrame.y;}
+	if (!horzSpan)
+	{
+		lumaN = lumaW;
+		lumaS = lumaE;
+	}
 	float subpixB = (subpixA * (1.0/12.0)) - lumaM;
 
 	float gradientN = lumaN - lumaM;
@@ -407,8 +398,11 @@ float4 PSMain_Quality(float2 pos, float4 posPos, sampler2D tex, float2 fxaaFrame
 
 	float dstN = posM.x - posN.x;
 	float dstP = posP.x - posM.x;
-	if(!horzSpan) {dstN = posM.y - posN.y;}
-	if(!horzSpan) {dstP = posP.y - posM.y;}
+	if (!horzSpan)
+	{
+		dstN = posM.y - posN.y;
+		dstP = posP.y - posM.y;
+	}
 
 	bool goodSpanN = (lumaEndN < 0.0) != lumaMLTZero;
 	float spanLength = (dstP + dstN);
@@ -432,7 +426,9 @@ float4 PSMain_Quality(float2 pos, float4 posPos, sampler2D tex, float2 fxaaFrame
 		posM.y += pixelOffsetSubpix * lengthSign;
 	}
 
-	return FxaaTexTop(tex, posM); 
+	half4 final = FxaaTexTop(tex, posM);
+	return final; 
+	//return float4(final.r, 0, 0, 1);
 }
 
 #endif

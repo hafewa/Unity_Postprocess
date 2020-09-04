@@ -225,8 +225,8 @@ GameObject:
   - component: {fileID: 80564864}
   - component: {fileID: 80564863}
   - component: {fileID: 80564868}
-  - component: {fileID: 80564867}
   - component: {fileID: 80564866}
+  - component: {fileID: 80564867}
   - component: {fileID: 80564869}
   - component: {fileID: 80564870}
   - component: {fileID: 80564872}
@@ -274,7 +274,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 59.777367
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -347,16 +347,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 80564862}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 09142e4e01e33dd448f01b038ad97d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: 1.3
-  threshold: 1.64
-  softThreshold: 0.677
+  intensity: 0.25
+  threshold: 0.95
+  softThreshold: 0.627
   resolution: 2
-  color: {r: 0.116545044, g: 0.13550983, b: 0.254717, a: 1}
+  color: {r: 0, g: 0.026954161, b: 0.18867922, a: 1}
   iterations: 6
 --- !u!114 &80564869
 MonoBehaviour:

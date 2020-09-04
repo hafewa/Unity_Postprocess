@@ -41,15 +41,22 @@ namespace PostProcess
 			float w = 1.0f / Screen.width;
 			float h = 1.0f / Screen.height;
 
+			material.SetVector("_FXAAFrame", new Vector4(w, h, 0, 0));
+			material.SetVector("_FXAAFrameSize", new Vector4(w * 2, h * 2, w * 0.5f, h * 0.5f));
+
+			// Renders faster on mobile builds..
+#if UNITY_EDITOR
 			int pass = 0;
 			if (priorityQuality)
 			{
 				pass = 1;
 			}
 
-			material.SetVector("_FXAAFrame", new Vector4(w, h, 0, 0));
-			material.SetVector("_FXAAFrameSize", new Vector4(w * 2, h * 2, w * 0.5f, h * 0.5f));
 			Graphics.Blit(source, destination, material, pass);
+#else
+			Graphics.Blit(source, destination, material, 0);
+#endif
+
 		}
 	}
 

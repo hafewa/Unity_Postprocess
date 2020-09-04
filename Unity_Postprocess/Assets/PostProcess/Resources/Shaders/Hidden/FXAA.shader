@@ -42,7 +42,8 @@
 			#pragma vertex VSMain
 			#pragma fragment PSMain
 			#define FXAA_EARLY_EXIT 1
-			#include "FXAA.cginc"
+			#define FXAA_DISCARD 0
+			#include "FXAA.hlsl"
 
 			half4 PSMain(PSInput i) : COLOR
 			{
@@ -60,7 +61,7 @@
 			#define FXAA_PC
 			#define FXAA_HLSL_3
 			#define FXAA_EARLY_EXIT 0
-			#include "FXAA.cginc"
+			#include "FXAA.hlsl"
 
 			half4 PSMain(PSInput i) : COLOR
 			{
