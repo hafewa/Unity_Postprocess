@@ -16,7 +16,7 @@ Shader "Hidden/PostProcess/CameraMotionBlurDX11"
 	CGINCLUDE
 	#pragma target 5.0
 	#include "UnityCG.cginc"
-	#include "CameraMotionBlurUtil.cginc"
+	#include "CameraMotionBlurUtil.hlsl"
 	#define NUM_SAMPLES (19)
 
 	float4 TileMax(PSInput i) : SV_Target

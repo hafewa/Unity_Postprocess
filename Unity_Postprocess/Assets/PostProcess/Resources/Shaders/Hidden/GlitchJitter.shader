@@ -7,7 +7,7 @@
 
 	CGINCLUDE
 	#include "UnityCG.cginc"
-	#include "GlitchUtil.cginc"
+	#include "GlitchUtil.hlsl"
 
 	sampler2D _MainTex;
 	float2 _Resolution;

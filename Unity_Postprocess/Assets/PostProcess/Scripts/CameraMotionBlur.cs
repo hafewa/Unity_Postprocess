@@ -63,6 +63,7 @@ namespace PostProcess
 		private bool wasActive = false;
 		private new Camera camera = default;
 		private Transform cameraTransform = default;
+		private RenderTextureFormat supportFormat = default;
 
 		private void Start()
 		{
@@ -78,15 +79,17 @@ namespace PostProcess
 			camera.depthTextureMode |= DepthTextureMode.Depth;
 			cameraTransform = camera.transform;
 
+			// get plat form support rt
+			supportFormat = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RGHalf) ? RenderTextureFormat.RGHalf : RenderTextureFormat.ARGBHalf;
+
+			// RenderWith Shader
 			replacementClear = Shader.Find("Hidden/PostProcess/MotionBlurClear");
 
 			// Mobile MotionBlur
 			material = new Material(Shader.Find("Hidden/PostProcess/CameraMotionBlur"));
 
-#if !UNITY_ANDROID || !UNITY_IOS
 			// Console MotionBlur
 			dx11Material = new Material(Shader.Find("Hidden/PostProcess/CameraMotionBlurDX11"));
-#endif
 		}
 
 		protected override void OnDisable()
@@ -116,12 +119,8 @@ namespace PostProcess
 		{
 			if (camera == null ||
 				material == null ||
-				replacementClear == null
-#if !UNITY_ANDROID || !UNITY_IOS
-				|| dx11Material == null)
-#else
-				)
-#endif
+				replacementClear == null || 
+				dx11Material == null)
 			{
 				return false;
 			}
@@ -249,13 +248,8 @@ namespace PostProcess
 				StartFrame();
 			}
 
-			// get plat form support rt
-			RenderTextureFormat format = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RGHalf) ? 
-				RenderTextureFormat.RGHalf : 
-				RenderTextureFormat.ARGBHalf;
-
 			// get temp textures
-			RenderTexture velocityBuffer = RenderTexture.GetTemporary(RoundUp(source.width, velocityDownsample), RoundUp(source.height, velocityDownsample), 0, format);
+			RenderTexture velocityBuffer = RenderTexture.GetTemporary(RoundUp(source.width, velocityDownsample), RoundUp(source.height, velocityDownsample), 0, supportFormat);
 			maxVelocity = Mathf.Max(2.0f, maxVelocity);
 
 			float _maxVelocity = maxVelocity;
@@ -263,8 +257,8 @@ namespace PostProcess
 			int tileHeight = RoundUp(velocityBuffer.height, (int)maxVelocity);
 			_maxVelocity = velocityBuffer.width / tileWidth;
 
-			RenderTexture tileBuffer = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, format);
-			RenderTexture neighbourBuffer = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, format);
+			RenderTexture tileBuffer = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, supportFormat);
+			RenderTexture neighbourBuffer = RenderTexture.GetTemporary(tileWidth, tileHeight, 0, supportFormat);
 			velocityBuffer.filterMode = FilterMode.Point;
 			tileBuffer.filterMode = FilterMode.Point;
 			neighbourBuffer.filterMode = FilterMode.Point;
@@ -299,7 +293,6 @@ namespace PostProcess
 			material.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
 
 
-#if !UNITY_ANDROID || !UNITY_IOS
 			// dx11 Shader Apply
 			dx11Material?.SetFloat("_MaxRadiusOrKInPaper", _maxVelocity);
 			dx11Material?.SetFloat("_MinVelocity", minVelocity);
@@ -309,7 +302,7 @@ namespace PostProcess
 			dx11Material?.SetTexture("_VelTex", velocityBuffer);
 			dx11Material?.SetTexture("_NeighbourMaxTex", neighbourBuffer);
 			dx11Material?.SetFloat("_SoftZDistance", Mathf.Max(0.00025f, softZDistance));
-#endif
+
 			if (filterType == MotionBlurFilter.CameraMotion)
 			{
 				BlurVector(source.width);

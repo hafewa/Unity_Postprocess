@@ -2,12 +2,14 @@
 	Reconstruction Filter:
 	Based on "Plausible Motion Blur"
 	http://graphics.cs.williams.edu/papers/MotionBlurI3D12/
-	http://casual-effects.com/research/McGuire2012Blur/McGuire12Blur.pdf
+
 	CameraMotion:
 	Based on Alex Vlacho's technique in
+	http://www.valvesoftware.com/publications/2008/GDC2008_PostProcessingInTheOrangeBox.pdf
 
 	SimpleBlur:
 	Straightforward sampling along velocities
+
 	ScatterFromGather:
 	Combines Reconstruction with depth of field type defocus
 */
@@ -17,16 +19,16 @@ Shader "Hidden/PostProcess/CameraMotionBlur"
 {
 	Properties
 	{
-		_MainTex("-", 2D) = "white" {}
-		_NoiseTex("-", 2D) = "grey" {}
-		_VelTex("-", 2D) = "black" {}
-		_NeighbourMaxTex("-", 2D) = "black" {}
+		_MainTex("MainTex", 2D) = "white" {}
+		_NoiseTex("NoiseTex", 2D) = "grey" {}
+		_VelTex("VelTex", 2D) = "black" {}
+		_NeighbourMaxTex("NeighbourMaxTex", 2D) = "black" {}
 	}
 
 	CGINCLUDE
 	#pragma target 3.0
 	#include "UnityCG.cginc"
-	#include "CameraMotionBlurUtil.cginc"
+	#include "CameraMotionBlurUtil.hlsl"
 	#define NUM_SAMPLES (11)
 	#define MOTION_SAMPLES (16)
 
