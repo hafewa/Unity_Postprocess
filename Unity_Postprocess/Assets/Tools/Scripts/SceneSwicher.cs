@@ -83,6 +83,8 @@ namespace Motion.Tools
 			{
 				loader.FXAA.enabled = !loader.FXAA.enabled;
 				fxaaText.text = string.Format("FXAA_{0}", loader.FXAA.enabled ? "ON" : "OFF");
+
+				SetQualitySettings(loader.FXAA.enabled);
 			}			
 		}
 
@@ -91,7 +93,13 @@ namespace Motion.Tools
 			if (fxaaText)
 			{
 				fxaaText.text = string.Format("FXAA_{0}", wasEnabled ? "ON" : "OFF");
+				SetQualitySettings(wasEnabled);
 			}
+		}
+
+		private void SetQualitySettings(bool wasFAXXEnabled)
+		{
+			QualitySettings.antiAliasing = (wasFAXXEnabled) ? 0 : 2;
 		}
 	}
 

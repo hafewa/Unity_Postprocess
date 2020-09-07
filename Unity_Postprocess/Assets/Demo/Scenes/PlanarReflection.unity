@@ -137,7 +137,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &80478233
 Light:
   m_ObjectHideFlags: 0
@@ -319,7 +319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &110370491
 Light:
   m_ObjectHideFlags: 0
@@ -408,6 +408,7 @@ GameObject:
   - component: {fileID: 466957701}
   - component: {fileID: 466957705}
   - component: {fileID: 466957706}
+  - component: {fileID: 466957707}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -513,6 +514,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   priorityQuality: 0
+--- !u!114 &466957707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466957700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09142e4e01e33dd448f01b038ad97d8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  intensity: 1.23
+  threshold: 3.26
+  softThreshold: 0.598
+  resolution: 2
+  color: {r: 0.025097892, g: 0.031393137, b: 0.11320752, a: 1}
+  iterations: 4
 --- !u!1 &528761170
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,7 +548,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &528761171
 Light:
   m_ObjectHideFlags: 0
@@ -834,7 +853,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1040637808
 Transform:
   m_ObjectHideFlags: 0
@@ -1258,7 +1277,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1949771159
 Transform:
   m_ObjectHideFlags: 0
