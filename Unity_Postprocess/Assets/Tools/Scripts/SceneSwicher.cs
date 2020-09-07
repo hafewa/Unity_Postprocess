@@ -78,16 +78,20 @@ namespace Motion.Tools
 				return;
 			}
 
-			if (Camera.main)
+			var loader = FindObjectOfType<SceneLoader>();
+			if (loader && loader.FXAA)
 			{
-				var fxaa = Camera.main.GetComponent<PostProcess.FXAA>() ?? Camera.main.gameObject.AddComponent<PostProcess.FXAA>();
-				if (fxaa)
-				{
-					fxaa.enabled = !fxaa.enabled;
-					fxaaText.text = string.Format("FXAA_{0}", fxaa.enabled ? "ON" : "OFF");
-				}
+				loader.FXAA.enabled = !loader.FXAA.enabled;
+				fxaaText.text = string.Format("FXAA_{0}", loader.FXAA.enabled ? "ON" : "OFF");
+			}			
+		}
+
+		public void UpdateFXAA(bool wasEnabled)
+		{
+			if (fxaaText)
+			{
+				fxaaText.text = string.Format("FXAA_{0}", wasEnabled ? "ON" : "OFF");
 			}
-			
 		}
 	}
 

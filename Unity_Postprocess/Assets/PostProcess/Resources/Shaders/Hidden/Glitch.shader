@@ -7,7 +7,7 @@
 
 	CGINCLUDE
 	#include "UnityCG.cginc"
-	#include "GlitchUtil.cginc"
+	#include "GlitchUtil.hlsl"
 	sampler2D _MainTex;
 	half _BlockSize, _Speed, _MaxRGBSplitX, _MaxRGBSplitY;
 
