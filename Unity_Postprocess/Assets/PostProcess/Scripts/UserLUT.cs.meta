@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 096baa88b0adc1b4cb6de4729bb42de5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - lutTexture: {fileID: 2800000, guid: 7e82e8282db178649a161efa4a262605, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

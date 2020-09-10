@@ -17,4 +17,5 @@
 - GodRay
 - MotionBlur
 - RadialBlur
+- UserLUT
 
