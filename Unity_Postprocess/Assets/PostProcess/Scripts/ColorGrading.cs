@@ -45,64 +45,51 @@ namespace PostProcess
 		[SerializeField]
 		private DitherModeType ditherMode = DitherModeType.Off;
 
-		public float ColorTemp
-		{
-			get { return colorTemp; }
-			set { colorTemp = value; }
-		}
-
-		public float ColorTint
-		{
-			get { return colorTint; }
-			set { colorTint = value; }
-		}
-
-		public bool ToneMapping
-		{
-			get { return toneMapping; }
-			set { toneMapping = value; }
-		}
-
-		public float Exposure
-		{
-			get { return exposure; }
-			set { exposure = value; }
-		}
-
-		public float Saturation
-		{
-			get { return saturation; }
-			set { saturation = value; }
-		}
+		public float ColorTemp { get => colorTemp; set => colorTemp = value; }
+		public float ColorTint { get => colorTint; set => colorTint = value; }
+		public bool ToneMapping { get => toneMapping; set => toneMapping = value; }
+		public float Exposure { get => exposure; set => exposure = value; }
+		public float Saturation { get => saturation; set => saturation = value; }
+		public DitherModeType DitherMode { get => ditherMode; set => ditherMode = value; }
 
 		public AnimationCurve RedCurve
 		{
-			get { return rCurve; }
-			set { rCurve = value; UpdateLUT(); }
+			get => rCurve;
+			set
+			{
+				rCurve = value;
+				UpdateLUT();
+			}
 		}
 
 		public AnimationCurve GreenCurve
 		{
-			get { return gCurve; }
-			set { gCurve = value; UpdateLUT(); }
+			get => gCurve;
+			set
+			{
+				gCurve = value;
+				UpdateLUT();
+			}
 		}
 
 		public AnimationCurve BlueCurve
 		{
-			get { return bCurve; }
-			set { bCurve = value; UpdateLUT(); }
+			get => bCurve;
+			set
+			{
+				bCurve = value;
+				UpdateLUT();
+			}
 		}
 
 		public AnimationCurve RGBCurve
 		{
-			get { return cCurve; }
-			set { cCurve = value; UpdateLUT(); }
-		}
-
-		public DitherModeType DitherMode
-		{
-			get { return ditherMode; }
-			set { ditherMode = value; }
+			get => cCurve;
+			set
+			{
+				cCurve = value;
+				UpdateLUT();
+			}
 		}
 
 

@@ -12,8 +12,8 @@ Shader "Hidden/PostProcess/ColorGrading"
 
 	CGINCLUDE
 
-	#pragma multi_compile BALANCING_OFF BALANCING_ON
-	#pragma multi_compile TONEMAPPING_OFF TONEMAPPING_ON
+	#pragma multi_compile _ BALANCING_ON
+	#pragma multi_compile _ TONEMAPPING_ON
 	#pragma multi_compile DITHER_OFF DITHER_ORDERED DITHER_TRIANGULAR
 	#include "UnityCG.cginc"
 	#include "ColorGrading.hlsl"
@@ -28,22 +28,19 @@ Shader "Hidden/PostProcess/ColorGrading"
 #endif
 #if !UNITY_COLORSPACE_GAMMA
 	#if TONEMAPPING_ON
-		// Apply the tone mapping.
 		rgb = tone_mapping(rgb);
 	#else
-		// Convert the color into the sRGB color space.
 		rgb = linear_to_srgb(rgb);
 	#endif
 #endif
-		// Color saturation.
 		rgb = apply_saturation(rgb);
-		// RGB curves.
 		rgb = apply_curves(rgb);
+
 #if !DITHER_OFF
 		rgb += dither(i.uv);
 #endif
+
 #if !UNITY_COLORSPACE_GAMMA
-		// Take the color back into the linear color space.
 		rgb = srgb_to_linear(rgb);
 #endif
 
