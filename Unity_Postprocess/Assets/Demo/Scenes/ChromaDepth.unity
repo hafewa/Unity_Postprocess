@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43975583, g: 0.4881816, b: 0.56839734, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -188,7 +188,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -326,12 +326,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1603570673}
   - component: {fileID: 1603570672}
-  - component: {fileID: 1603570674}
   - component: {fileID: 1603570668}
-  - component: {fileID: 1603570669}
-  - component: {fileID: 1603570670}
   - component: {fileID: 1603570671}
-  - component: {fileID: 1603570675}
+  - component: {fileID: 1603570669}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -369,36 +366,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1603570667}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72b0213c48423e74abda763afda6edfd, type: 3}
+  m_Script: {fileID: 11500000, guid: f4a4e97406fb2214cb4f04a1a70d79e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 16.6
-  blockSize: 8
-  maxRGBSplitX: 8
-  maxRGBSplitY: 8
---- !u!114 &1603570670
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1603570667}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 176b6dff37ec03d46993847b9ec40149, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  amount: 0.4
-  frequency: 3.6
-  speed: 0.193
-  rgbSplit: 21.5
-  blend: 0.53
-  resolution: 2
-  randomFrequency: 1
-  frequencyLoop: 0
-  direction: 0
+  priorityQuality: 0
 --- !u!114 &1603570671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,6 +384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e04746e976184b038c6f5a99323222b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fxaa: {fileID: 1603570669}
 --- !u!20 &1603570672
 Camera:
   m_ObjectHideFlags: 0
@@ -468,34 +442,6 @@ Transform:
   m_Father: {fileID: 943708879}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1603570674
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1603570667}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e790f937c2537448f81e2c1396e95f00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blurAmount: 0.6
-  extraBlur: 0
-  resolution: 4
---- !u!114 &1603570675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1603570667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4a4e97406fb2214cb4f04a1a70d79e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  priorityQuality: 0
 --- !u!1001 &605100923882591030
 PrefabInstance:
   m_ObjectHideFlags: 0

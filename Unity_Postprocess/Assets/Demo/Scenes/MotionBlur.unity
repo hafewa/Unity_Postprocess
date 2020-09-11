@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1.5
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: aa21d673c2048eb4ca3f694f4302eb3c, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.45142078, g: 0.50062615, b: 0.57079405, a: 1}
+  m_IndirectSpecularColor: {r: 0.40402627, g: 0.45334363, b: 0.5138159, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -236,14 +236,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 943708878}
-  m_LocalRotation: {x: 0.06162845, y: 0.70441604, z: -0.06162845, w: 0.70441604}
-  m_LocalPosition: {x: 0, y: 1.2, z: 0}
+  m_LocalRotation: {x: 0.029363936, y: 0.70649683, z: -0.029363936, w: 0.70649683}
+  m_LocalPosition: {x: 0, y: 1.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1938101561}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 10, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 4.76, y: 90, z: 0}
 --- !u!114 &943708880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,22 +477,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1312708541}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ec222a4eb7e84df2a0a1c8c94cf1452, type: 3}
+  m_Script: {fileID: 11500000, guid: e790f937c2537448f81e2c1396e95f00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterType: 0
-  velocityScale: 4
-  maxVelocity: 12
-  minVelocity: 0.1
-  movementScale: 0
-  rotationScale: 1.6
-  softZDistance: 0.005
-  velocityDownsample: 1
-  excludeLayers:
-    serializedVersion: 2
-    m_Bits: 256
-  noiseTexture: {fileID: 2800000, guid: 1778d0c32241345d8b3f14c8fb11ef00, type: 3}
-  jitter: 0.05
+  blurAmount: 0.6
+  extraBlur: 0
+  resolution: 4
 --- !u!20 &1312708544
 Camera:
   m_ObjectHideFlags: 0
@@ -502,7 +492,7 @@ Camera:
   m_GameObject: {fileID: 1312708541}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.17332682, g: 0.17562844, b: 0.1792453, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -617,7 +607,7 @@ Camera:
   m_GameObject: {fileID: 1603570667}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.17332682, g: 0.17562844, b: 0.1792453, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2

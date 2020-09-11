@@ -6,6 +6,7 @@ namespace Motion.Tools
 {
     public class SceneLoader : MonoBehaviour
     {
+		[SerializeField]
         PostProcess.FXAA fxaa = default;
 
         public PostProcess.FXAA FXAA => fxaa;
@@ -13,9 +14,7 @@ namespace Motion.Tools
 
         void Start()
         {
-            fxaa = GetComponent<PostProcess.FXAA>() ?? gameObject.AddComponent<PostProcess.FXAA>();
-
-            SceneSwicher.Instance.Initialize();
+			SceneSwicher.Instance.Initialize();
 
             if (fxaa)
             {
