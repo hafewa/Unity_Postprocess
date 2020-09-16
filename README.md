@@ -8,6 +8,7 @@
 - CameraMotionBlur
 - ChromaDepth
 - ChromaticAberration
+- ColorGrading
 - Fog (Height, Distance)
 - Fast Approximate Anti-aliasing (FXAA) 
 - GaussianBlur
