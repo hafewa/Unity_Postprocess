@@ -152,10 +152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72b0213c48423e74abda763afda6edfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 27.9
-  blockSize: 12.2
-  maxRGBSplitX: 3
-  maxRGBSplitY: 2.5
+  speed: 24.9
+  blockSize: 9.9
+  maxRGBSplitX: 5.5
+  maxRGBSplitY: 8.7
 --- !u!124 &90962570
 Behaviour:
   m_ObjectHideFlags: 0

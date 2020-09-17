@@ -10,6 +10,9 @@ namespace PostProcess
 		[Header("if trued console quality FXAA. falsed Fast FXAA")]
 		public bool priorityQuality = false;
 
+		[Header("if trued AllowMSAA disable")]
+		public bool forceDisableMSAA = false;
+
 		private void OnEnable()
 		{
 			if (material == null)
@@ -18,10 +21,13 @@ namespace PostProcess
 				material.hideFlags = HideFlags.HideAndDontSave;
 			}
 
-			var cam = GetComponent<Camera>();
-			if (cam.allowMSAA)
+			if (forceDisableMSAA)
 			{
-				cam.allowMSAA = false;
+				var cam = GetComponent<Camera>();
+				if (cam.allowMSAA)
+				{
+					cam.allowMSAA = false;
+				}
 			}
 		}
 
