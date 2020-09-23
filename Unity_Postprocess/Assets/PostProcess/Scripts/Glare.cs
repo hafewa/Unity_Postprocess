@@ -12,20 +12,23 @@ namespace PostProcess
 		private static readonly int INTENSITY_ID = Shader.PropertyToID("_Intensity");
 		private static readonly int ITERATION_ID = Shader.PropertyToID("_Iteration");
 
-		[SerializeField, Range(0.0f, 10.0f)]
-		private float threshold = 0.5f;
+		[Range(0.0f, 10.0f)]
+		public float threshold = 0.5f;
 
-		[SerializeField, Range(0.5f, 0.95f)]
-		private float attenuation = 0.9f;
+		[Range(0.5f, 0.95f)]
+		public float attenuation = 0.9f;
 
-		[SerializeField, Range(0.0f, 10.0f)]
-		private float intensity = 1.0f;
+		[Range(0.0f, 10.0f)]
+		public float intensity = 1.0f;
 
-		[SerializeField, Range(1, 6)]
-		private int iteration = 4;
+		[Range(1, 6)]
+		public int resolution = 4;
 
-		[SerializeField, Range(0f, 2f)]
-		private float valueX, valueY;
+		[Range(1, 10)]
+		public int iteration = 4;
+
+		[Range(0f, 2f)]
+		public float valueX, valueY;
 
 		/// <summary>
 		/// ImageEffect Opaque
@@ -47,40 +50,34 @@ namespace PostProcess
 			}
 
 			var paramsId = Shader.PropertyToID("_Params");
-			material.SetFloat(THRESHOLD_ID, this.threshold);
-			material.SetFloat(ATTENUATION_ID, this.attenuation);
-			material.SetFloat(INTENSITY_ID, this.intensity);
-			material.SetFloat(ITERATION_ID, this.iteration);
+			material.SetFloat(THRESHOLD_ID, threshold);
+			material.SetFloat(ATTENUATION_ID, attenuation);
+			material.SetFloat(INTENSITY_ID, intensity);
+			material.SetFloat(ITERATION_ID, iteration);
 
-			var tempRT1 = RenderTexture.GetTemporary(source.width / this.iteration, source.height / this.iteration);
-			var tempRT2 = RenderTexture.GetTemporary(source.width / this.iteration, source.height / this.iteration);
+			int width = source.width / resolution;
+			int height = source.height / resolution;
+			var tempRT1 = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGBHalf);
+			var tempRT2 = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGBHalf);
 
-			// SourceをDestにコピーしておく
 			Graphics.Blit(source, dest);
 
-			// 4方向にスターを作るループ
-			for (int i = 0; i < this.iteration; ++i)
+			for (int i = 0; i < iteration; ++i)
 			{
-				// まず明度が高い部分を抽出する
 				Graphics.Blit(source, tempRT1, material, 0);
 
 				var currentSrc = tempRT1;
 				var currentTarget = tempRT2;
 				var parameters = Vector3.zero;
 
-				// x, yにUV座標のオフセットを代入する
 				// (-1, -1), (-1, 1), (1, -1), (1, 1)
 				parameters.x = i == 0 || i == 1 ? -1 * valueX : valueX;
 				parameters.y = i == 0 || i == 2 ? -1 * valueY : valueY;
 
-				// 1方向にぼかしを伸ばしていくループ
 				for (int j = 0; j < this.iteration; ++j)
 				{
-					// zに描画回数のindexを代入してマテリアルにセット
 					parameters.z = j;
 					material.SetVector(paramsId, parameters);
-
-					// 二つのRenderTextureに交互にBlitして効果を足していく
 					Graphics.Blit(currentSrc, currentTarget, material, 1);
 					var tmp = currentSrc;
 					currentSrc = currentTarget;

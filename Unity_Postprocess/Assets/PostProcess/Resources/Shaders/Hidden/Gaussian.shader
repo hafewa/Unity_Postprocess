@@ -24,7 +24,8 @@ Shader "Hidden/PostProcess/Gaussian"
 		return o;
 	}
 
-	sampler2D _MainTex;
+
+	sampler2D _MainTex; float4 _MainTex_TexelSize;
 	sampler2D _BloomSource1;
 	sampler2D _BloomSource2;
 	fixed _Intencity1;
@@ -32,7 +33,17 @@ Shader "Hidden/PostProcess/Gaussian"
 	fixed _Threshold;
 	fixed _Radius;
 
-	// sampling texture
+	float interleaved_gradient(float2 uv)
+	{
+		float3 magic = float3(0.06711056, 0.00583715, 52.9829189);
+		return frac(magic.z * frac(dot(uv, magic.xy)));
+	}
+
+	float3 dither(float2 uv)
+	{
+		return (float3)(interleaved_gradient(uv / _MainTex_TexelSize) / 255);
+	}
+
 	fixed3 gaussian(fixed2 deltaPixel, fixed2 uv)
 	{
 		float3 col = 0;
@@ -47,13 +58,11 @@ Shader "Hidden/PostProcess/Gaussian"
 		return col;
 	}
 
-	// 1pass
 	fixed4 frag_threshold(PSInput i) : SV_Target
 	{
 		return tex2D(_MainTex, i.uv) - _Threshold;
 	}
 
-	// 2pass
 	fixed4 frag_cross_bloom(PSInput i) : SV_Target
 	{
 		float3 col = 0;
@@ -66,7 +75,6 @@ Shader "Hidden/PostProcess/Gaussian"
 		return float4(col, 1);
 	}
 
-	// 3pass
 	fixed4 frag_gaussian_x(PSInput i) : SV_Target
 	{
 		float2 pixel = (_ScreenParams.zw - 1) * _Radius;
@@ -76,7 +84,6 @@ Shader "Hidden/PostProcess/Gaussian"
 		return float4(col, 1);
 	}
 
-	// 4pass
 	fixed4 frag_gaussian_y(PSInput i) : SV_Target
 	{
 		float2 pixel = (_ScreenParams.zw - 1) * _Radius;
@@ -86,7 +93,6 @@ Shader "Hidden/PostProcess/Gaussian"
 		return float4(col, 1);
 	}
 
-	// 5pass
 	fixed4 frag_add(PSInput i) : SV_Target
 	{
 		float3 col = 0;

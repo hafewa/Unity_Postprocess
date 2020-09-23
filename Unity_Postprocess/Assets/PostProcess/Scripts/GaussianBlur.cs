@@ -21,25 +21,27 @@ namespace PostProcess
 		private static readonly int bloomSource2ID = Shader.PropertyToID("_BloomSource2");
 		private static readonly int bloomSource1RT_ID = Shader.PropertyToID("_BloomSourceRT1");
 		private static readonly int bloomSource2RT_ID = Shader.PropertyToID("_BloomSourceRT2");
-		private static readonly int COLOR_PROP_ID = Shader.PropertyToID("_Color");
 
-		[SerializeField][Range(0, 40)]
-		private float intencity1 = 1;
 
-		[SerializeField][Range(0, 10)]
-		private float threshold1 = 1;
+		[Range(0, 40)]
+		public float intencity1 = 1;
 
-		[SerializeField][Range(2, 20)]
-		private float radius1 = 8;
+		[Range(0, 10)]
+		public float threshold1 = 1;
 
-		[SerializeField][Range(0, 40)]
-		private float intencity2 = 1;
+		[Range(2, 20)]
+		public float radius1 = 8;
 
-		[SerializeField][Range(0, 10)]
-		private float threshold2 = 1;
+		[Range(0, 40)]
+		public float intencity2 = 1;
 
-		[SerializeField][Range(2, 80)]
-		private float radius2 = 8;
+		[Range(0, 10)]
+		public float threshold2 = 1;
+
+		[Range(2, 80)]
+		public float radius2 = 8;
+
+		private RenderTextureFormat format = RenderTextureFormat.ARGBHalf;
 
 
 		private void RenderBlur(CommandBuffer commandBuffer, RenderTargetIdentifier src, int outputBufferID, float threshold, float radius, bool isCrossBloom)
@@ -48,24 +50,23 @@ namespace PostProcess
 			commandBuffer.SetGlobalFloat(radiusID, radius);
 			int width = (int)(Screen.width / radius);
 			int height = (int)(Screen.height / radius);
-			commandBuffer.GetTemporaryRT(thresholdRT_ID, width, height, 0, FilterMode.Bilinear);
+			commandBuffer.GetTemporaryRT(thresholdRT_ID, width, height, 0, FilterMode.Bilinear, format);
 			commandBuffer.Blit(src, thresholdRT_ID, material, 0);
 
-			// filter
-			commandBuffer.GetTemporaryRT(small1RT_ID, width, height, 0, FilterMode.Bilinear);
+			commandBuffer.GetTemporaryRT(small1RT_ID, width, height, 0, FilterMode.Bilinear, format);
 			if (isCrossBloom)
 			{
 				commandBuffer.Blit(thresholdRT_ID, small1RT_ID, material, 1);
 			}
 			else
 			{
-				commandBuffer.GetTemporaryRT(small2RT_ID, width, height, 0, FilterMode.Bilinear);
+				commandBuffer.GetTemporaryRT(small2RT_ID, width, height, 0, FilterMode.Bilinear, format);
 				commandBuffer.Blit(thresholdRT_ID, small2RT_ID, material, 2);
 				commandBuffer.Blit(small2RT_ID, small1RT_ID, material, 3);
 			}
 			commandBuffer.SetGlobalFloat(radiusID, radius / 2);
-			commandBuffer.GetTemporaryRT(middleRT_ID, width * 2, height * 2, 0, FilterMode.Bilinear);
-			commandBuffer.GetTemporaryRT(outputBufferID, width * 2, height * 2, 0, FilterMode.Bilinear);
+			commandBuffer.GetTemporaryRT(middleRT_ID, width * 2, height * 2, 0, FilterMode.Bilinear, format);
+			commandBuffer.GetTemporaryRT(outputBufferID, width * 2, height * 2, 0, FilterMode.Bilinear, format);
 			commandBuffer.Blit(small1RT_ID, middleRT_ID, material, 2);
 			commandBuffer.Blit(middleRT_ID, outputBufferID, material, 3);
 		}
@@ -90,9 +91,6 @@ namespace PostProcess
 			}
 
 			var commandBuffer = new CommandBuffer();
-			//material.SetColor(COLOR_PROP_ID, color);
-
-			// Additive to original scene
 			commandBuffer.SetGlobalFloat(intencity1ID, intencity1);
 			commandBuffer.SetGlobalFloat(intencity2ID, intencity2);
 			RenderBlur(commandBuffer, source, bloomSource1RT_ID, threshold1, radius1, true);

@@ -37,6 +37,7 @@ namespace PostProcess
 
 			material.SetTexture(LUT, lutTexture);
 			material.SetFloat(CONTRIBUTION, contribution);
+
 			Graphics.Blit(source, destination, material);
 		}
 

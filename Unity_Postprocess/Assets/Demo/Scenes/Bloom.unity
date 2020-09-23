@@ -152,9 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09142e4e01e33dd448f01b038ad97d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: 1.02
-  threshold: 0.78
-  softThreshold: 0.585
+  intensity: 1.71
+  threshold: 0.95
+  softThreshold: 0.539
   resolution: 2
   color: {r: 0.02669989, g: 0.071111165, b: 0.2264151, a: 1}
   iterations: 5

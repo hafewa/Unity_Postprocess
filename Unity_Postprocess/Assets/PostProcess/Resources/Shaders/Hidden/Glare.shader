@@ -21,7 +21,6 @@
 
 		Cull Off ZWrite Off ZTest Always
 
-		// intensity pass
 		Pass
 		{
 			CGPROGRAM
@@ -53,7 +52,6 @@
 			ENDCG
 		}
 
-		// 1 make star pass
 		Pass
 		{
 			CGPROGRAM
@@ -98,7 +96,6 @@
 			ENDCG
 		}
 
-		// addtional scene color
 		Pass
 		{
 			Blend One One

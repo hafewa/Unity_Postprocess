@@ -31,9 +31,22 @@
 				float4 vertex : SV_POSITION;
 			};
 
-			sampler2D _MainTex;
+
+			sampler2D _MainTex; float4 _MainTex_TexelSize;
 			sampler2D _LUT; float4 _LUT_TexelSize;
 			float _Contribution;
+
+
+			float interleaved_gradient(float2 uv)
+			{
+				float3 magic = float3(0.06711056, 0.00583715, 52.9829189);
+				return frac(magic.z * frac(dot(uv, magic.xy)));
+			}
+
+			float3 dither(float2 uv)
+			{
+				return (float3)(interleaved_gradient(uv / _MainTex_TexelSize) / 255);
+			}
 
 			PSIput VSMain(VSInput v)
 			{
@@ -43,7 +56,6 @@
 				return o;
 			}
 
-			//COLOR GRADING LUT METHOD
 			half4 ColorGrade(PSIput i)
 			{
 				float maxColor = COLORS - 1.0;
