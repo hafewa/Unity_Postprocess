@@ -27,7 +27,6 @@
 			half _EffectAmount;
 			half _CenterX;
 			half _CenterY;
-			half _Radius;
 
 			struct PSInput
 			{
@@ -49,7 +48,7 @@
 				float2 dist = i.uv - float2(_CenterX, _CenterY);
 				for (int i = 0; i < _Samples; ++i) 
 				{
-					float scale = 1 - _EffectAmount * (i / _Samples)* (saturate(length(dist) / _Radius));
+					float scale = 1 - _EffectAmount * (i / _Samples)* (saturate(length(dist)));
 					col += tex2D(_MainTex, dist * scale + float2(_CenterX, _CenterY));
 				}
 				col /= _Samples;

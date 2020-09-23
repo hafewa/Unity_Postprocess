@@ -13,7 +13,6 @@ namespace PostProcess
 		static readonly int AMOUNT_ID = Shader.PropertyToID("_EffectAmount");
 		static readonly int CENTERX_ID = Shader.PropertyToID("_CenterX");
 		static readonly int CENTERY_ID = Shader.PropertyToID("_CenterY");
-		static readonly int RADIUS_ID = Shader.PropertyToID("_Radius");
 
 
 		[SerializeField][Range(4f, 32f)]
@@ -28,8 +27,6 @@ namespace PostProcess
 		[SerializeField][Range(0f, 1f)]
 		private float centerY = 0.5f;
 
-		[SerializeField][Range(0f, 50f)]
-		private float radius = 0.1f;
 
 		/// <summary>
 		/// ImageEffect Opaque
@@ -54,7 +51,6 @@ namespace PostProcess
 			material.SetFloat(AMOUNT_ID, this.amount);
 			material.SetFloat(CENTERX_ID, this.centerX);
 			material.SetFloat(CENTERY_ID, this.centerY);
-			material.SetFloat(RADIUS_ID, this.radius);
 			Graphics.Blit(source, destination, this.material);
 		}
 	}

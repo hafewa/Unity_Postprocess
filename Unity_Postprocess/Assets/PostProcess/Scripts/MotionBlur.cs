@@ -6,13 +6,13 @@ namespace PostProcess
 	public sealed class MotionBlur : PostProcessBase
 	{
 		[SerializeField]
-		private float blurAmount = 0.6f;
+		private float amount = 0.6f;
 
 		[SerializeField]
 		private bool extraBlur = false;
 
 		[SerializeField][Range(2, 8)]
-		private int resolution = 4;
+		private int resolution = 1;
 
 		// Resouces
 		private RenderTexture accumTexture;
@@ -66,18 +66,16 @@ namespace PostProcess
 			if (extraBlur)
 			{
 				RenderTexture blurbuffer = RenderTexture.GetTemporary(source.width / resolution, source.height / resolution, 0);
-				// restore???????s??
 				accumTexture.MarkRestoreExpected();
 				Graphics.Blit(accumTexture, blurbuffer);
 				Graphics.Blit(blurbuffer, accumTexture);
 				RenderTexture.ReleaseTemporary(blurbuffer);
 			}
 
-			blurAmount = Mathf.Clamp(blurAmount, 0.0f, 0.92f);
+			amount = Mathf.Clamp(amount, 0.0f, 0.92f);
 			material.SetTexture("_MainTex", accumTexture);
-			material.SetFloat("_AccumOrig", 1.0f - blurAmount);
+			material.SetFloat("_AccumOrig", 1.0f - amount);
 
-			// restore???????s??
 			accumTexture.MarkRestoreExpected();
 			Graphics.Blit(source, accumTexture, material);
 			Graphics.Blit(accumTexture, destination);
