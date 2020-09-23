@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.39631686, g: 0.446428, b: 0.52064216, a: 1}
+  m_IndirectSpecularColor: {r: 0.39631653, g: 0.4464271, b: 0.52064097, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -152,12 +152,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09142e4e01e33dd448f01b038ad97d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: 1.65
-  threshold: 1.05
-  softThreshold: 0.592
-  resolution: 1
-  color: {r: 0, g: 0.115253165, b: 0.3301887, a: 1}
-  iterations: 4
+  intensity: 1.02
+  threshold: 0.78
+  softThreshold: 0.585
+  resolution: 2
+  color: {r: 0.02669989, g: 0.071111165, b: 0.2264151, a: 1}
+  iterations: 5
 --- !u!124 &90962570
 Behaviour:
   m_ObjectHideFlags: 0
@@ -317,6 +317,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ReflectionProbes
       objectReference: {fileID: 0}
+    - target: {fileID: 113988, guid: f77fec65cd407fd4681c7d530abedc08, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 421652, guid: f77fec65cd407fd4681c7d530abedc08, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -370,6 +374,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 100004, guid: a3244c08ab4d16f45b564401c17e84d4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: a3244c08ab4d16f45b564401c17e84d4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -414,6 +422,10 @@ PrefabInstance:
     - target: {fileID: 100004, guid: dc07b2a3ab0f97147ad301272dd22002, type: 3}
       propertyPath: m_Name
       value: CalibrationScales
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: dc07b2a3ab0f97147ad301272dd22002, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: dc07b2a3ab0f97147ad301272dd22002, type: 3}
       propertyPath: m_LocalPosition.x
@@ -516,6 +528,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 23424531182768784, guid: 715f38b3d8fbf1e44b58ad8528f04944,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 715f38b3d8fbf1e44b58ad8528f04944, type: 3}
 --- !u!1001 &2093646455
@@ -528,6 +545,10 @@ PrefabInstance:
     - target: {fileID: 100004, guid: e11f662626928b14e8f57acb029360b9, type: 3}
       propertyPath: m_Name
       value: Lights
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: e11f662626928b14e8f57acb029360b9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: e11f662626928b14e8f57acb029360b9, type: 3}
       propertyPath: m_LocalPosition.x

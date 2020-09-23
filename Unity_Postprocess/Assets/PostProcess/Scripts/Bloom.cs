@@ -44,7 +44,7 @@ namespace PostProcess
 		[SerializeField, ColorUsage(false, true)]
 		private Color color = Color.black;
 
-		[SerializeField]
+		[SerializeField][Range(1,8)]
 		private int iterations = 4;
 
 		private RenderTexture[] textures = new RenderTexture[8];
@@ -80,7 +80,8 @@ namespace PostProcess
 
 			int width = source.width / resolution;
 			int height = source.height / resolution;
-			RenderTextureFormat format = source.format;
+			// BGRA32
+			RenderTextureFormat format = RenderTextureFormat.ARGBHalf;//source.format;
 
 			RenderTexture currentDestination = textures[0] = RenderTexture.GetTemporary(width, height, 0, format);
 			Graphics.Blit(source, currentDestination, material, (int)Pass.Prefilter);

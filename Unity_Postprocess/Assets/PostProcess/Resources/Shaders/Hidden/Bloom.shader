@@ -8,6 +8,7 @@
 
 	CGINCLUDE
 	#include "UnityCG.cginc"
+	#pragma target 3.0
 	sampler2D _MainTex, _SourceTex; 
 	float4 _MainTex_ST, _SourceTex_ST;
 	float4 _MainTex_TexelSize;
@@ -27,6 +28,17 @@
 		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uv = v.texcoord;
 		return o;
+	}
+
+	float interleaved_gradient(float2 uv)
+	{
+		float3 magic = float3(0.06711056, 0.00583715, 52.9829189);
+		return frac(magic.z * frac(dot(uv, magic.xy)));
+	}
+
+	float3 dither(float2 uv)
+	{
+		return (float3)(interleaved_gradient(uv / _MainTex_TexelSize) / 255);
 	}
 
 	half3 sample (float2 uv)
@@ -51,6 +63,7 @@
 		contribution /= max(brightness, 0.00001);
 		return c * contribution;
 	}
+
 	ENDCG
 
 	SubShader
@@ -61,7 +74,6 @@
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex VSMain
 			#pragma fragment PSMain
 			half4 PSMain(PSInput i) : SV_Target
@@ -75,7 +87,6 @@
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex VSMain
 			#pragma fragment PSMain
 			half4 PSMain(PSInput i) : SV_Target
@@ -90,7 +101,6 @@
 		{
 			Blend One One
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex VSMain
 			#pragma fragment PSMain
 			half4 PSMain(PSInput i) : SV_Target
@@ -104,7 +114,6 @@
 		Pass
 		{
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex VSMain
 			#pragma fragment PSMain
 			half4 PSMain(PSInput i) : SV_Target
